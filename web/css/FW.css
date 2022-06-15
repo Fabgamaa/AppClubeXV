@@ -1,0 +1,483 @@
+
+A:link
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #5b71b0;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+A:visited
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #5b71b0;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+A:hover
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #6ac4ff;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+
+A.red_link:link
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #ff0000;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+A.red_link:visited
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #ff0000;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+A.red_link:hover
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #ff9900;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+A.green_link:link
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #006600;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+A.green_link:visited
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #006600;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+A.green_link:hover
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #33cc00;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+A.yellow_link:link
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #D1C049;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+A.yellow_link:visited
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    COLOR: #D1C049;
+    FONT-FAMILY: Verdana,Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+A.yellow_link:hover
+{
+	font-weight: bolder;
+	font-size: 8pt;
+	color: #EBE750;
+	font-family: Verdana,Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+.font_titulo
+{
+    BORDER-RIGHT: thin;
+    BORDER-TOP: thin;
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    Z-INDEX: 5;
+    BORDER-LEFT: thin;
+    COLOR: #191970;
+    BORDER-BOTTOM: thin;
+    FONT-FAMILY: Verdana, Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+.font_titulo_bordas
+{
+	border-right: #8ba6c4 1pt solid;
+	border-top: #8ba6c4 1pt solid;
+	font-size: 8pt;
+	border-left: #8ba6c4 1pt solid;
+	color: #191970;
+	border-bottom: #8ba6c4 1pt solid;
+	font-family: Verdana,Arial;
+	vertical-align:bottom;
+	text-align: left;
+	width:500px;
+	height:20px;
+}
+.font_titulo_grd
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 11pt;
+    COLOR: #191970;
+    FONT-FAMILY: Verdana, arial
+}
+.botao
+{
+    BORDER-RIGHT: steelblue thin solid;
+    BORDER-TOP: steelblue thin solid;
+    FONT-WEIGHT: 600;
+    FONT-SIZE: 8pt;
+    BACKGROUND-IMAGE: url(../img/fundo_button.jpg);
+    BORDER-LEFT: steelblue thin solid;
+    WIDTH: 70pt;
+    COLOR: #000080;
+    BORDER-BOTTOM: steelblue thin solid;
+    FONT-FAMILY: Arial, Verdana;
+    HEIGHT: 17pt;
+    TEXT-DECORATION: none
+}
+.botaoCentro
+{
+	background-position: center;
+	border-right: steelblue thin solid;
+	border-top: steelblue thin solid;
+	font-weight: 600;
+	font-size: 8pt;
+	background-image: url(../img/fundo_button.jpg);
+	border-left: steelblue thin solid;
+	width: 70pt;
+	color: #000080;
+	border-bottom: steelblue thin solid;
+	font-family: Arial, Verdana;
+	height: 17pt;
+	text-decoration: none;
+}
+
+.font_body
+{
+	font-size: 8pt;
+	color: #191970;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_body_maiusculo
+{
+	font-size: 8pt;
+	color: #191970;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.font_body_red
+{
+	font-size: 8pt;
+	color: #ff0000;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+.font_body_green
+{
+	font-size: 8pt;
+	color: #009900;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_body_resposta
+{
+	font-size: 8pt;
+	color: #D3D3D3;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_recurso
+{
+	font-size: 8pt;
+	color: red;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_incidente
+{
+	font-size: 8pt;
+	color: Goldenrod;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_pendente
+{
+	font-size: 8pt;
+	color: red;
+	font-family: Verdana, Arial, 'MS Sans Serif';
+	text-decoration: none;
+}
+
+.font_body_destaque
+{
+    FONT-SIZE: 8pt;
+    COLOR: #191970;
+    FONT-FAMILY: Verdana, Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bolder
+   
+}
+
+.font_body_rel
+{
+    FONT-SIZE: 8pt;
+    COLOR: #191970;
+    FONT-FAMILY: Verdana, Arial, 'MS Sans Serif';
+    HEIGHT: 20px;
+    TEXT-DECORATION: none
+}
+.font_titulo
+{
+    FONT-SIZE: 9pt;
+    COLOR: #191970;
+    FONT-FAMILY: Verdana, Arial, 'MS Sans Serif';
+    TEXT-DECORATION: none
+}
+/*
+.fundo_banner
+{
+    BACKGROUND-POSITION: center top;
+    BACKGROUND-ATTACHMENT: fixed;
+    BACKGROUND-IMAGE: url(../img/fundo_banner.gif);
+    BACKGROUND-REPEAT: no-repeat
+}
+*/
+.fundo_banner_curto
+{
+    BACKGROUND-POSITION: center top;
+    BACKGROUND-ATTACHMENT: fixed;
+    BACKGROUND-IMAGE: url(../img/fundo_banner_curto.gif);
+    BACKGROUND-REPEAT: no-repeat
+}
+
+.fundo_banner_longo
+{
+    BACKGROUND-POSITION: center top;
+    BACKGROUND-ATTACHMENT: fixed;
+    BACKGROUND-IMAGE: url(../img/fundo_banner_longo.gif);
+    BACKGROUND-REPEAT: no-repeat
+}
+
+.bg
+{
+    BACKGROUND-ATTACHMENT: scroll;
+    BACKGROUND-IMAGE: url(../img/bg.gif);
+    BACKGROUND-REPEAT: repeat-x
+}
+.bg_banner
+{
+    BACKGROUND-ATTACHMENT: scroll;
+    BACKGROUND-IMAGE: url(../img/fundo_faixa_menu.gif);
+    BACKGROUND-REPEAT: repeat-x
+}
+.bg_quadro
+{
+    BACKGROUND-ATTACHMENT: scroll;
+    BACKGROUND-IMAGE: url(../img/fundo_quadro.gif);
+    BACKGROUND-REPEAT: repeat-x
+}
+.fundo_claro
+{
+    BORDER-RIGHT: #e6e2d8 1px solid;
+    BORDER-TOP: #e6e2d8 1px solid;
+    BORDER-LEFT: #e6e2d8 1px solid;
+    BORDER-BOTTOM: #e6e2d8 1px solid;
+    BORDER-COLLAPSE: collapse;
+    BACKGROUND-COLOR: #f7f6f3
+}
+.logo
+{
+    BACKGROUND-ATTACHMENT: fixed;
+    LEFT: 0px;
+    BACKGROUND-IMAGE: url(../img/logo.jpg);
+    BACKGROUND-REPEAT: no-repeat;
+    POSITION: absolute;
+    TOP: 0px
+}
+
+.cabecalho_tabela
+{
+	font-weight: bold;
+	font-size: 8pt;
+	vertical-align: middle;
+	color: #ffffff;
+	font-family: Arial;
+	height: 20px;
+	background-color: #325892;
+	text-align: center;
+	text-decoration: underline;
+}
+.linha_par
+{
+    FONT-SIZE: 8pt;
+    COLOR: #003378;
+    FONT-FAMILY: Verdana,Arial;
+    BORDER-COLLAPSE: collapse;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: #f7f6f3;
+    TEXT-DECORATION: none
+}
+.selecionado
+{
+    FONT-SIZE: 8pt;
+    COLOR: #003378;
+    FONT-FAMILY: Verdana,Arial;
+    BORDER-COLLAPSE: collapse;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: #b8ccde;
+    TEXT-DECORATION: none;
+    cursor:hand
+}
+.linha_impar
+{
+    FONT-SIZE: 8pt;
+    COLOR: #003378;
+    FONT-FAMILY: Verdana,Arial;
+    BORDER-COLLAPSE: collapse;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: #ffffff;
+    TEXT-DECORATION: none
+}
+.rodape_tabela
+{
+    font-weight: bold;
+    font-size: 8pt;
+    vertical-align: middle;
+    color: #ffffff;
+    font-family: Arial;
+    height: 20px;
+    background-color: #5b71b0;
+    text-align: left;
+    text-decoration: none;
+}
+.faixa_degrade
+{
+    BACKGROUND-POSITION: left top;
+    FONT-SIZE: 8pt;
+    BACKGROUND-ATTACHMENT: fixed;
+    BACKGROUND-IMAGE: url(../img/faixa.gif);
+    VERTICAL-ALIGN: middle;
+    BACKGROUND-REPEAT: no-repeat;
+    FONT-FAMILY: Verdana,Arial;
+    BORDER-COLLAPSE: collapse;
+    TEXT-ALIGN: left;
+    TEXT-DECORATION: none
+}
+.combo_box
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	font-size: 8pt;
+	border-left: #b0c4de 1px solid;
+	color: #191970;
+	border-bottom: #b0c4de 1px solid;
+	font-family: Verdana,Arial;
+	text-transform: uppercase;
+}
+.text_box
+{
+	border-right: #8ba6c4 1pt solid;
+	border-top: #8ba6c4 1pt solid;
+	font-size: 8pt;
+	border-left: #8ba6c4 1pt solid;
+	color: #191970;
+	border-bottom: #8ba6c4 1pt solid;
+	font-family: Verdana,Arial;
+	text-transform: uppercase;
+}
+.destaque
+{
+    BACKGROUND-POSITION: left bottom;
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 9pt;
+    BACKGROUND-IMAGE: url(../Img/destaque.gif);
+    COLOR: #191970;
+    BACKGROUND-REPEAT: no-repeat;
+    FONT-FAMILY: Verdana, Arial;
+    HEIGHT: 25px;
+    TEXT-DECORATION: none
+}
+
+.destaque_red
+{
+	background-position: left bottom;
+	font-weight: bolder;
+	font-size: 9pt;
+	color: #FF0000;
+	background-repeat: no-repeat;
+	font-family: Verdana, Arial;
+	height: 25px;
+	text-decoration: none;
+}
+
+.destaque_relatorio
+{
+    BACKGROUND-POSITION: left bottom;
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 11pt;
+    BACKGROUND-IMAGE: url(../Img/destaque.gif);
+    COLOR: #191970;
+    BACKGROUND-REPEAT: no-repeat;
+    FONT-FAMILY: Verdana, Arial;
+    HEIGHT: 25px;
+    TEXT-DECORATION: none
+}
+.link_documento
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 8pt;
+    CURSOR: hand;
+    COLOR: #191970;
+    FONT-FAMILY: Verdana, Arial, 'MS Sans Serif';
+    TEXT-DECORATION: underline
+}
+.linha_destaque_relatorio
+{
+    BACKGROUND-COLOR: #f7f6f3
+}
+.bordas
+{
+    BORDER-RIGHT: white thin solid;
+    BORDER-TOP: white thin;
+    BORDER-LEFT: white thin solid;
+    BORDER-BOTTOM: white thin
+}
+.cabecalho_tabela2
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 8pt;
+    COLOR: #ffffff;
+    FONT-FAMILY: Arial;
+    BACKGROUND-COLOR: #325892;
+    TEXT-DECORATION: underline
+}
+.linha
+{
+    BACKGROUND-POSITION: center center;
+    BACKGROUND-IMAGE: url(../img/dot.gif);
+    BACKGROUND-REPEAT: repeat-x
+}
+.linha_vertical
+{
+    BACKGROUND-POSITION: center top;
+    BACKGROUND-IMAGE: url(../img/dot.gif);
+    BACKGROUND-REPEAT: repeat-y
+}

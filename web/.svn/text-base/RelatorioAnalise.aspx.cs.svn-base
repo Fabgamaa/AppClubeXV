@@ -1,0 +1,934 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.IO;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+
+using FWBDS;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Request["rowId"] != null)
+            rowId.Value = Request["rowId"].ToString();
+
+        if (Request["Origem"] != null)
+            Origem.Value = Request["Origem"].ToString();
+
+        if (!IsPostBack)
+        {
+            FormataControles();
+            CarregaControles();
+            CarregaDados();
+        }
+
+        if (!string.IsNullOrEmpty(rowId.Value))
+        {
+            btProcurar_Click(sender, e);
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "imprimir", "window.top.frameprincipal.focus(); window.top.frameprincipal.print();", true);
+        }
+    }
+
+    protected void FormataControles()
+    {
+        txt_dat_ini.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat_ini.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+        txt_dat_fim.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat_fim.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+
+        txt_dat_ini.Focus();
+    }
+
+    protected void CarregaControles()
+    {
+        Titulo Titulo = new Titulo();
+        DataSet dsTitulo = Titulo.Consultar();
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id);
+        dsTitulo.Dispose();
+
+        AnaliseTipo AnaliseTipo = new AnaliseTipo();
+        DataSet dsAnaliseTipo = AnaliseTipo.Consultar();
+
+        cbo_ans_tip.DataSource = dsAnaliseTipo;
+        cbo_ans_tip.DataValueField = "ANS_TIP_DES";
+        cbo_ans_tip.DataTextField = "ANS_TIP_DES";
+        cbo_ans_tip.DataBind();
+
+        Apresentacao Apresentacao = new Apresentacao();
+        DataSet dsApresentacao = Apresentacao.Consultar();
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id);
+        dsApresentacao.Dispose();
+
+        Entrelacamento Entrelacamento = new Entrelacamento();
+        DataSet dsEntrelacamento = Entrelacamento.Consultar();
+        FWGNR.VerificaStatus(dsEntrelacamento, "ERT_ID", "ERT_DES", "ERT_STS", cbo_ert_id);
+        dsEntrelacamento.Dispose();
+
+        Maquina Maquina = new Maquina();
+        DataSet dsMaquina = Maquina.Consultar();
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id);
+        dsMaquina.Dispose();
+
+    }
+
+    protected string CriaFiltro(Analise Analise)
+    {
+        string filtro = "";
+        if (!string.IsNullOrEmpty(rowId.Value))
+        {
+            Analise.ANS_ID = Convert.ToInt32(rowId.Value);
+        }
+        if (!String.IsNullOrEmpty(txt_dat_ini.Text))
+        {
+            Analise.ANS_DAT_INI = Convert.ToDateTime(txt_dat_ini.Text);
+            filtro = filtro + "Data Inicial= " + txt_dat_ini.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(txt_dat_fim.Text))
+        {
+            Analise.ANS_DAT_FIM = Convert.ToDateTime(txt_dat_fim.Text);
+            filtro = filtro + "Data Final= " + txt_dat_fim.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise.ANS_LOT = txt_lot.Text;
+            filtro = filtro + "Lote= " + txt_lot.Text + "; ";
+        }
+
+        String sFiltro = "";
+        foreach (System.Web.UI.WebControls.ListItem ans_tip in cbo_ans_tip.Items)
+        {
+            if (ans_tip.Selected)
+            {
+                Analise.LST_ANS_TIP = Analise.LST_ANS_TIP + "'" + ans_tip.Value + "', ";
+                sFiltro = sFiltro + " " + ans_tip.Text + "; ";
+            }
+        }
+        if (!String.IsNullOrEmpty(Analise.LST_ANS_TIP))
+        {
+            //Retira ", " final
+            Analise.LST_ANS_TIP = Analise.LST_ANS_TIP.Substring(0, Analise.LST_ANS_TIP.Length - 2);
+            filtro = filtro + "Tipo de Análise= " + sFiltro;
+        }
+
+        if (!String.IsNullOrEmpty(cbo_tit_poy_id.Text))
+        {
+            Analise.ANS_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id.SelectedValue);
+            filtro = filtro + "Título= " + cbo_tit_poy_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_aps_id.Text))
+        {
+            Analise.ANS_APS_ID = Convert.ToInt32(cbo_aps_id.SelectedValue);
+            filtro = filtro + "Apresentação= " + cbo_aps_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_maq_id.Text))
+        {
+            Analise.ANS_MAQ_ID = Convert.ToInt32(cbo_maq_id.SelectedValue);
+            filtro = filtro + "Máquina= " + cbo_maq_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_ert_id.Text))
+        {
+            Analise.ANS_ERT_ID = Convert.ToInt32(cbo_ert_id.SelectedValue);
+            filtro = filtro + "Entrelaçamento= " + cbo_ert_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(txt_vrd.Text))
+        {
+            Analise.ANS_VRD = txt_vrd.Text;
+            filtro = filtro + "Virada= " + txt_vrd.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_sts.Text))
+        {
+            Analise.ANS_STS = Convert.ToInt32(cbo_sts.SelectedValue);
+            filtro = filtro + "Status= " + cbo_sts.SelectedItem.Text + "; ";
+        }
+
+        return filtro;
+    }
+
+    protected void btProcurar_Click(object sender, EventArgs e)
+    {
+        string filtro = "";
+        /*
+        if (txt_dat.Text == "")
+        {
+            TratamentoErro("O campo Data é obrigatório.");
+            txt_dat.Focus();
+            return;
+        }
+
+        if (txt_lot.Text == "")
+        {
+            TratamentoErro("O campo Lote é obrigatório.");
+            txt_lot.Focus();
+            return;
+        }
+
+        if (cbo_tit_poy_id.Text == "")
+        {
+            TratamentoErro("O campo Título é obrigatório.");
+            cbo_tit_poy_id.Focus();
+            return;
+        }
+
+        if (cbo_aps_id.Text == "")
+        {
+            TratamentoErro("O campo Apresentação é obrigatório.");
+            cbo_aps_id.Focus();
+            return;
+        }
+
+        if (cbo_maq_id.Text == "")
+        {
+            TratamentoErro("O campo Máquina é obrigatório.");
+            cbo_maq_id.Focus();
+            return;
+        }
+
+        if (cbo_ert_id.Text == "")
+        {
+            TratamentoErro("O campo Entrelaçamento é obrigatório.");
+            cbo_ert_id.Focus();
+            return;
+        }
+
+        if (txt_vrd.Text == "")
+        {
+            TratamentoErro("O campo Virada é obrigatório.");
+            txt_vrd.Focus();
+            return;
+        }
+        */
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        gvAnalise.DataSource = dsAnalise;
+        gvAnalise.DataBind();
+        dsAnalise.Dispose();
+        Dispose();
+
+        if (!String.IsNullOrEmpty(filtro))
+        {
+            lb_fil.Text = filtro;
+        }
+        else
+        {
+            lb_fil.Text = "Não há filtros.";
+        }
+
+        dvFiltro.Visible = false;
+        dvResultado.Visible = true;
+
+    }
+
+    protected void CarregaDados()
+    {
+        if (!string.IsNullOrEmpty(rowId.Value))
+        {
+            Analise Analise = new Analise();
+            Analise.ANS_ID = Convert.ToInt32(rowId.Value);
+            DataSet dsAnalise = Analise.Consultar();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                dv_rel.Visible = true;
+
+                lb_lot_rel.Text = dsAnalise.Tables[0].Rows[0]["ANS_LOT"].ToString();
+                lb_tit_poy_id_rel.Text = dsAnalise.Tables[0].Rows[0]["TIT_POY_DES"].ToString();
+                lb_aps_id_rel.Text = dsAnalise.Tables[0].Rows[0]["APS_DES"].ToString();
+                lb_ert_id_rel.Text = dsAnalise.Tables[0].Rows[0]["ERT_DES"].ToString();
+                lb_maq_tip_id_rel.Text = dsAnalise.Tables[0].Rows[0]["MAQ_TIP_DES"].ToString();
+                lb_maq_id_rel.Text = dsAnalise.Tables[0].Rows[0]["MAQ_DES"].ToString();
+                lb_vrd_rel.Text = dsAnalise.Tables[0].Rows[0]["ANS_VRD"].ToString();
+                lb_dat_rel.Text = Convert.ToDateTime(dsAnalise.Tables[0].Rows[0]["ANS_DAT"].ToString()).ToString("dd/MM/yyyy");
+
+                if (lb_lot_rel.Text.Substring(0, 1) == "Z")
+                {
+                    lbl_rt3_rt5.Text = "* Retenção a 6% e 12%";
+                }
+                else
+                {
+                    lbl_rt3_rt5.Text = "* Retenção a 3% e 6%";
+                }
+
+                lb_obs_rel.Text = dsAnalise.Tables[0].Rows[0]["ANS_OBS"].ToString();
+
+                CarregaEspecificacao();
+
+                //Apenas 6 posições de cada Virada
+                for (int i = 0; i < 6; i++)
+                {
+                    Label lb_pos = (Label)dvResultado.FindControl("lb_pos_00" + (i + 1));
+                    lb_pos.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_00" + (i + 1)].ToString();
+
+                    CarregaItem(i, "tit", dsAnalise);
+                    CarregaItem(i, "tnc", dsAnalise);
+                    CarregaItem(i, "aon", dsAnalise);
+                    CarregaItem(i, "ole", dsAnalise);
+                    CarregaItem(i, "enm", dsAnalise);
+                    CarregaItem(i, "eee", dsAnalise);
+                    CarregaItem(i, "kkk", dsAnalise);
+                    CarregaItem(i, "bbb", dsAnalise);
+                    CarregaItem(i, "pue", dsAnalise);
+                    CarregaItem(i, "trq", dsAnalise);
+                    CarregaItem(i, "ert", dsAnalise);
+                    CarregaItem(i, "rt3", dsAnalise);
+                    CarregaItem(i, "rt5", dsAnalise);
+                    CarregaItem(i, "pes", dsAnalise);
+                    CarregaItem(i, "dmo", dsAnalise);
+                    CarregaItem(i, "dnd", dsAnalise);
+                }
+
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TIT_MED"].ToString()))
+                {
+                    lb_tit_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TNC_MED"].ToString()))
+                {
+                    lb_tnc_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_AON_MED"].ToString()))
+                {
+                    lb_aon_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_ENM_MED"].ToString()))
+                {
+                    lb_enm_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_EEE_MED"].ToString()))
+                {
+                    lb_eee_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_KKK_MED"].ToString()))
+                {
+                    lb_kkk_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_BBB_MED"].ToString()))
+                {
+                    lb_bbb_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_PUE_MED"].ToString()))
+                {
+                    lb_pue_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_OLE_MED"].ToString()))
+                {
+                    lb_ole_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TRQ_MED"].ToString()))
+                {
+                    lb_trq_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_ERT_MED"].ToString()))
+                {
+                    lb_ert_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_RT3_MED"].ToString()))
+                {
+                    lb_rt3_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_RT5_MED"].ToString()))
+                {
+                    lb_rt5_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_DND_MED"].ToString()))
+                {
+                    lb_dnd_med.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_MED"].ToString();
+                }
+
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TIT_DSV"].ToString()))
+                {
+                    lb_tit_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TNC_DSV"].ToString()))
+                {
+                    lb_tnc_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_AON_DSV"].ToString()))
+                {
+                    lb_aon_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_ENM_DSV"].ToString()))
+                {
+                    lb_enm_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_EEE_DSV"].ToString()))
+                {
+                    lb_eee_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_KKK_DSV"].ToString()))
+                {
+                    lb_kkk_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_BBB_DSV"].ToString()))
+                {
+                    lb_bbb_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_PUE_DSV"].ToString()))
+                {
+                    lb_pue_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_OLE_DSV"].ToString()))
+                {
+                    lb_ole_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_TRQ_DSV"].ToString()))
+                {
+                    lb_trq_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_ERT_DSV"].ToString()))
+                {
+                    lb_ert_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_RT3_DSV"].ToString()))
+                {
+                    lb_rt3_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_RT5_DSV"].ToString()))
+                {
+                    lb_rt5_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_DSV"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_DND_DSV"].ToString()))
+                {
+                    lb_dnd_dsv.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_DSV"].ToString();
+                }
+
+                ConfereLimites();
+            }
+            else
+            {
+                lb_filtro.Text = "Não foram encontrados registros de acordo com o filtro.";
+            }
+
+            dsAnalise.Dispose();
+            Dispose();
+
+            dvFiltro.Visible = false;
+            dvResultado.Visible = false;
+            dvRelatorio.Visible = true;
+        }
+    }
+
+    protected void CarregaEspecificacao()
+    {
+        if (!string.IsNullOrEmpty(lb_lot_rel.Text))
+        {
+            Especificacao Especificacao = new Especificacao();
+            Especificacao.ANE_LOT = lb_lot_rel.Text;
+            DataSet dsEspecificacao = Especificacao.Consultar();
+
+            if (dsEspecificacao.Tables[0].Rows.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MED"].ToString()))
+                {
+                    lb_tit_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MIN"].ToString()))
+                {
+                    lb_tit_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MAX"].ToString()))
+                {
+                    lb_tit_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MED"].ToString()))
+                {
+                    lb_tnc_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MIN"].ToString()))
+                {
+                    lb_tnc_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MAX"].ToString()))
+                {
+                    lb_tnc_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MED"].ToString()))
+                {
+                    lb_aon_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MIN"].ToString()))
+                {
+                    lb_aon_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MAX"].ToString()))
+                {
+                    lb_aon_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MED"].ToString()))
+                {
+                    lb_ole_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MIN"].ToString()))
+                {
+                    lb_ole_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MAX"].ToString()))
+                {
+                    lb_ole_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MED"].ToString()))
+                {
+                    lb_enm_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MIN"].ToString()))
+                {
+                    lb_enm_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MAX"].ToString()))
+                {
+                    lb_enm_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MED"].ToString()))
+                {
+                    lb_eee_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MIN"].ToString()))
+                {
+                    lb_eee_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MAX"].ToString()))
+                {
+                    lb_eee_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MED"].ToString()))
+                {
+                    lb_kkk_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MIN"].ToString()))
+                {
+                    lb_kkk_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MAX"].ToString()))
+                {
+                    lb_kkk_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MED"].ToString()))
+                {
+                    lb_bbb_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MIN"].ToString()))
+                {
+                    lb_bbb_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MAX"].ToString()))
+                {
+                    lb_bbb_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MED"].ToString()))
+                {
+                    lb_pue_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MIN"].ToString()))
+                {
+                    lb_pue_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MAX"].ToString()))
+                {
+                    lb_pue_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MED"].ToString()))
+                {
+                    lb_trq_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MIN"].ToString()))
+                {
+                    lb_trq_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MAX"].ToString()))
+                {
+                    lb_trq_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MED"].ToString()))
+                {
+                    lb_ert_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MIN"].ToString()))
+                {
+                    lb_ert_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MAX"].ToString()))
+                {
+                    lb_ert_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MED"].ToString()))
+                {
+                    lb_rt3_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MIN"].ToString()))
+                {
+                    lb_rt3_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MAX"].ToString()))
+                {
+                    lb_rt3_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MED"].ToString()))
+                {
+                    lb_rt5_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MIN"].ToString()))
+                {
+                    lb_rt5_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MAX"].ToString()))
+                {
+                    lb_rt5_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MAX"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MED"].ToString()))
+                {
+                    lb_dnd_med_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MED"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MIN"].ToString()))
+                {
+                    lb_dnd_min_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MIN"].ToString();
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MAX"].ToString()))
+                {
+                    lb_dnd_max_esp.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MAX"].ToString();
+                }
+
+            }
+            dsEspecificacao.Dispose();
+            Dispose();
+        }
+    }
+
+    private void CarregaItem(int i, string sItem, DataSet dsAnalise)
+    {
+        if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ANS_" + sItem.ToUpper() + "_00" + (i + 1)].ToString()))
+        {
+            Label lb_item = (Label)dvResultado.FindControl("lb_" + sItem + "_00" + (i + 1));
+            lb_item.Text = dsAnalise.Tables[0].Rows[0]["ANS_" + sItem.ToUpper() + "_00" + (i + 1)].ToString();
+
+            Label lb_item_min = (Label)dvResultado.FindControl("lb_" + sItem + "_min_esp");
+            Label lb_item_max = (Label)dvResultado.FindControl("lb_" + sItem + "_max_esp");
+        }
+    }
+
+    protected void ConfereLimites()
+    {
+        ConfereItem("tit");
+        ConfereItem("tnc");
+        ConfereItem("aon");
+        ConfereItem("ole");
+        ConfereItem("enm");
+        ConfereItem("eee");
+        ConfereItem("kkk");
+        ConfereItem("bbb");
+        ConfereItem("pue");
+        ConfereItem("trq");
+        ConfereItem("ert");
+        ConfereItem("rt3");
+        ConfereItem("rt5");
+        ConfereItem("dnd");
+    }
+
+    private void ConfereItem(string sItem)
+    {
+        double n;
+
+        Label lb_item_min = (Label)FindControl("lb_" + sItem + "_min_esp");
+        Label lb_item_max = (Label)FindControl("lb_" + sItem + "_max_esp");
+
+        if (Double.TryParse(lb_item_min.Text, out n) && Double.TryParse(lb_item_max.Text, out n))
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                Label lb_item = (Label)FindControl("lb_" + sItem + "_00" + (i + 1));
+
+                if (Double.TryParse(lb_item.Text, out n))
+                {
+                    //Response.Write(lb_item.ID + ";" + lb_item.Text + ";" + lb_item_min.Text + ";" + lb_item_max.Text + ";<br/>");
+                    Label lb_status = (Label)FindControl("lb_" + sItem + "_sts_00" + (i + 1) );
+
+                    if ((Convert.ToDouble(lb_item.Text) < Convert.ToDouble(lb_item_min.Text)) || (Convert.ToDouble(lb_item.Text) > Convert.ToDouble(lb_item_max.Text)))
+                    {
+                        lb_status.Text = "Alerta";
+                    }
+                }
+            }
+
+            Label lb_med = (Label)FindControl("lb_" + sItem + "_med");
+            Label lb_sts_med = (Label)FindControl("lb_" + sItem + "_sts_med");
+            Label lb_dsv = (Label)FindControl("lb_" + sItem + "_dsv");
+            Label lb_sts_dsv = (Label)FindControl("lb_" + sItem + "_sts_dsv");
+
+            Label lb_med_esp = (Label)FindControl("lb_" + sItem + "_med_esp");
+
+            //Response.Write("lb_" + sItem + "_med;" + lb_med.Text + ";" + "lb_" + sItem + "_sts_med;" + lb_sts_med.Text + ";" + lb_item_min.Text + ";" + lb_item_max.Text + ";<br/>");
+            if (Double.TryParse(lb_med.Text, out n))
+            {
+                double X = 0;
+                double Y = 1;
+
+                ParametroAnalise ParametroAnalise = new ParametroAnalise();
+                ParametroAnalise.PRM_ANS_STS = 1; 
+			    DataSet dsParametroAnalise = ParametroAnalise.Consultar();
+			    if (dsParametroAnalise.Tables[0].Rows.Count > 0)
+			    {
+                    if (!string.IsNullOrEmpty(dsParametroAnalise.Tables[0].Rows[0]["PRM_ANS_" + sItem.ToUpper() + "_XXX"].ToString()))
+                    {
+    				    X = Convert.ToDouble(dsParametroAnalise.Tables[0].Rows[0]["PRM_ANS_" + sItem.ToUpper() + "_XXX"].ToString());
+                    }
+
+                    if (!string.IsNullOrEmpty(dsParametroAnalise.Tables[0].Rows[0]["PRM_ANS_" + sItem.ToUpper() + "_YYY"].ToString()))
+                    {
+    				    Y = Convert.ToDouble(dsParametroAnalise.Tables[0].Rows[0]["PRM_ANS_" + sItem.ToUpper() + "_YYY"].ToString());
+                    }
+                }
+
+                if (Double.TryParse(lb_med_esp.Text, out n))
+                {
+                    if ((Convert.ToDouble(lb_med.Text) < (Convert.ToDouble(lb_med_esp.Text) * (1 - X))) || (Convert.ToDouble(lb_med.Text) > (Convert.ToDouble(lb_med_esp.Text) * (1 + X))))
+                    {
+                        lb_sts_med.Text = "Alerta";
+                    }
+                }
+
+                if ((Convert.ToDouble(lb_med.Text) < Convert.ToDouble(lb_item_min.Text)) || (Convert.ToDouble(lb_med.Text) > Convert.ToDouble(lb_item_max.Text)))
+                {
+                    lb_sts_med.ForeColor = System.Drawing.Color.Red;
+                    lb_sts_med.Text = "Fora";
+                }
+
+                if (Double.TryParse(lb_dsv.Text, out n))
+                {
+                    if (Convert.ToDouble(lb_dsv.Text) > (Convert.ToDouble(lb_med_esp.Text) * Y))
+                    {
+                        lb_sts_dsv.Text = "Alerta";
+                    }
+                }
+            }
+        }
+    }
+
+    protected void gvAnalise_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            e.Row.Attributes.Add("onMouseOver", "this.className='selecionado';");
+            if ((e.Row.RowIndex % 2) == 0)
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_par';");
+            }
+            else
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_impar';");
+            }
+            e.Row.Attributes.Add("onClick", "JavaScript:window.top.frameprincipal.location = 'RelatorioAnalise.aspx?rowId=" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "'");
+        }
+    }
+
+    private SortDirection GridViewSortDirection
+    {
+        get
+        {
+            if (ViewState["sortDirection"] == null)
+                ViewState["sortDirection"] = SortDirection.Ascending;
+            return (SortDirection)ViewState["sortDirection"];
+        }
+        set { ViewState["sortDirection"] = value; }
+    }
+
+    private int GetSortColumnIndex()
+    {
+        foreach (DataControlField field in gvAnalise.Columns)
+        {
+            if (field.SortExpression == (string)ViewState["SortExpression"])
+            {
+                return gvAnalise.Columns.IndexOf(field);
+            }
+        }
+        return -1;
+    }
+
+    private void AddSortImage(int columnIndex, GridViewRow headerRow)
+    {
+        System.Web.UI.WebControls.Image sortImage = new System.Web.UI.WebControls.Image();
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            sortImage.ImageUrl = "img/arrow_down.gif";
+            sortImage.AlternateText = "Ordem Ascendente";
+        }
+        else
+        {
+            sortImage.ImageUrl = "img/arrow_up.gif";
+            sortImage.AlternateText = "Ordem Descendente";
+        }
+        headerRow.Cells[columnIndex].Controls.Add(sortImage);
+    }
+
+    protected void gvAnalise_RowCreated(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            int sortColumnIndex = GetSortColumnIndex();
+            if (sortColumnIndex != -1)
+            {
+                AddSortImage(sortColumnIndex, e.Row);
+            }
+        }
+    }
+
+    protected void gvAnalise_Sorting(Object sender, GridViewSortEventArgs e)
+    {
+        string Ordem = " ASC ";
+        string sortExpression = e.SortExpression;
+        ViewState["SortExpression"] = sortExpression;
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            GridViewSortDirection = SortDirection.Descending;
+            Ordem = " DESC ";
+        }
+        else
+        {
+            GridViewSortDirection = SortDirection.Ascending;
+            Ordem = " ASC ";
+        }
+
+        string filtro = "";
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        DataTable dtAnalise = dsAnalise.Tables[0];
+        DataView dvAnalise = new DataView(dtAnalise);
+        dvAnalise.Sort = e.SortExpression + Ordem;
+        gvAnalise.DataSource = dvAnalise;
+        gvAnalise.DataBind();
+
+        dvAnalise.Dispose();
+        dtAnalise.Dispose();
+        dsAnalise.Dispose();
+        Dispose();
+    }
+
+    private void TratamentoErro(string erro)
+    {
+        if (!string.IsNullOrEmpty(erro))
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "AlertErro", "alert('" + erro + "');", true);
+    }
+
+
+    protected void lkb_pdf_Click(object sender, EventArgs e)
+    {
+        if (gvAnalise.Rows.Count > 0)
+        {
+            Response.Clear();
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "attachment;filename=Lista.pdf");
+            // Sem a opção de Salvar
+            // Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            StringWriter stringWrite = new StringWriter();
+            HtmlTextWriter htmlWrite = new HtmlTextWriter(stringWrite);
+            gvAnalise.AllowSorting = false;
+            gvAnalise.AllowPaging = false;
+            //gvAnalise.DataBind();
+
+            // Deixar cabeçalho em branco/preto, sem links e imagens
+            for (int i = 0; i < gvAnalise.HeaderRow.Cells.Count; i++)
+            {
+                LinkButton lnk = (LinkButton)gvAnalise.HeaderRow.Cells[i].Controls[0];
+                lnk.Enabled = false;
+                lnk.BackColor = System.Drawing.Color.White;
+                lnk.ForeColor = System.Drawing.Color.Black;
+            }
+
+            gvAnalise.RenderControl(htmlWrite);
+
+            StringReader stringReader = new StringReader(stringWrite.ToString());
+            Document pdfDocument = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+            HTMLWorker htmlParser = new HTMLWorker(pdfDocument);
+            PdfWriter.GetInstance(pdfDocument, Response.OutputStream);
+            pdfDocument.Open();
+            htmlParser.Parse(stringReader);
+            pdfDocument.Close();
+            Response.Write(pdfDocument);
+            Response.End();
+        }
+        else
+        {
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "alerta", "alert('Não há registros para exportação !');", true);
+        }
+    }
+
+    protected void lkb_xls_Click(object sender, EventArgs e)
+    {
+        if (gvAnalise.Rows.Count > 0)
+        {
+            Response.Clear();
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment;filename=Lista.xls");
+            //Sem a opção de Salvar
+            //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+            StringWriter stringWrite = new StringWriter();
+            HtmlTextWriter htmlWrite = new HtmlTextWriter(stringWrite);
+            gvAnalise.AllowSorting = false;
+            gvAnalise.AllowPaging = false;
+
+            // Deixar cabeçalho em branco/preto, sem links e imagens
+
+            for (int i = 0; i < gvAnalise.HeaderRow.Cells.Count; i++)
+            {
+                LinkButton lnk = (LinkButton)gvAnalise.HeaderRow.Cells[i].Controls[0];
+                lnk.Enabled = false;
+                lnk.BackColor = System.Drawing.Color.White;
+                lnk.ForeColor = System.Drawing.Color.Black;
+            }
+
+            gvAnalise.RenderControl(htmlWrite);
+
+            Response.Write(stringWrite.ToString());
+            Response.End();
+        }
+        else
+        {
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "alerta", "alert('Não há registros para exportação !');", true);
+        }
+    }
+
+    public override void VerifyRenderingInServerForm(Control control)
+    {
+
+    }
+
+    protected void txt_lot_OnTextChanged(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise Analise = new Analise();
+            Analise.ANS_LOT = txt_lot.Text;
+            //Somente Ativos
+            Analise.ANS_STS = 1;
+            DataSet dsAnalise = Analise.Consultar();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                txt_dat_ini.Text = Convert.ToDateTime(dsAnalise.Tables[0].Rows[0]["ANS_DAT"].ToString()).ToString("dd/MM/yyyy");
+                txt_dat_fim.Text = Convert.ToDateTime(dsAnalise.Tables[0].Rows[0]["ANS_DAT"].ToString()).ToString("dd/MM/yyyy");
+                cbo_tit_poy_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_TIT_POY_ID"].ToString();
+                cbo_aps_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_APS_ID"].ToString();
+                cbo_ert_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_ERT_ID"].ToString();
+                cbo_maq_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_MAQ_ID"].ToString();
+                txt_vrd.Text = dsAnalise.Tables[0].Rows[0]["ANS_VRD"].ToString();
+            }
+            dsAnalise.Dispose();
+            Dispose();
+        }
+    }
+}

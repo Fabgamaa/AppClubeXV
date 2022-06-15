@@ -1,0 +1,65 @@
+﻿#region Assembly FWBDS.dll, v4.0.30319
+// E:\Sistema Fourway\FWUNF\web\Bin\FWBDS.dll
+#endregion
+
+using System;
+using System.Data;
+
+namespace FWBDS
+{
+    public class Afinidade
+    {
+        public Afinidade();
+
+        public int? AFN_ANA_USR_ID { get; set; }
+        public int? AFN_APS_ID { get; set; }
+        public double? AFN_BBB { get; set; }
+        public int? AFN_BBN { get; set; }
+        public double? AFN_CLO { get; set; }
+        public DateTime? AFN_DAT { get; set; }
+        public DateTime? AFN_DAT_FIM { get; set; }
+        public DateTime? AFN_DAT_INI { get; set; }
+        public int? AFN_ERT_ID { get; set; }
+        public double? AFN_ESL { get; set; }
+        public double? AFN_ESU { get; set; }
+        public int? AFN_FOR_001_ID { get; set; }
+        public int? AFN_FOR_002_ID { get; set; }
+        public int? AFN_FOR_003_ID { get; set; }
+        public int? AFN_FOR_004_ID { get; set; }
+        public int? AFN_ID { get; set; }
+        public double? AFN_LNC { get; set; }
+        public double? AFN_LNE { get; set; }
+        public string AFN_LOT { get; set; }
+        public int? AFN_MAQ_ID { get; set; }
+        public int? AFN_MAQ_TIP_ID { get; set; }
+        public string AFN_MGE_001 { get; set; }
+        public string AFN_MGE_002 { get; set; }
+        public string AFN_MGE_003 { get; set; }
+        public string AFN_MGE_004 { get; set; }
+        public double? AFN_PFE { get; set; }
+        public double? AFN_PMT { get; set; }
+        public double? AFN_PPF { get; set; }
+        public double? AFN_PSE { get; set; }
+        public string AFN_SEM { get; set; }
+        public int? AFN_STS { get; set; }
+        public int? AFN_TIP { get; set; }
+        public int? AFN_TIT_POY_ID { get; set; }
+        public DateTime? AFN_TMS_ATL { get; set; }
+        public double? AFN_TMT { get; set; }
+        public double? AFN_TOT { get; set; }
+        public int? AFN_USR_ALT_ID { get; set; }
+        public int? AFN_USR_INC_ID { get; set; }
+        public int? AFN_VLC { get; set; }
+        public int? AFN_VRD { get; set; }
+        public string SQL { get; set; }
+        public string TOP { get; set; }
+
+        public string Alterar();
+        public DataSet Consultar();
+        public DataSet ConsultarLote();
+        public DataSet ConsultarMedia();
+        public DataSet ConsultarMediaMensal();
+        public string Excluir();
+        public string Inserir();
+    }
+}

@@ -1,0 +1,592 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.IO;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+
+using FWBDS;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+               
+        
+        if (!IsPostBack)
+        {
+            FormataControles();
+            CarregaControles();
+        }
+    }
+
+    protected void FormataControles()
+    {
+        txt_lot.Focus();
+    }
+
+    protected void CarregaControles()
+    {
+        Titulo Titulo = new Titulo();
+        DataSet dsTitulo = Titulo.Consultar();
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id);
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id_rel);
+        dsTitulo.Dispose();
+
+        AnaliseTipo AnaliseTipo = new AnaliseTipo();
+        DataSet dsAnaliseTipo = AnaliseTipo.Consultar();
+
+        cbo_ans_tip.DataSource = dsAnaliseTipo;
+        cbo_ans_tip.DataValueField = "ANS_TIP_DES";
+        cbo_ans_tip.DataTextField = "ANS_TIP_DES";
+        cbo_ans_tip.DataBind();
+
+        Apresentacao Apresentacao = new Apresentacao();
+        DataSet dsApresentacao = Apresentacao.Consultar();
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id);
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id_rel);
+        dsApresentacao.Dispose();
+
+        Maquina Maquina = new Maquina();
+        DataSet dsMaquina = Maquina.Consultar();
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id);
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id_rel);
+        dsMaquina.Dispose();
+
+        Entrelacamento Entrelacamento = new Entrelacamento();
+        DataSet dsEntrelacamento = Entrelacamento.Consultar();
+        FWGNR.VerificaStatus(dsEntrelacamento, "ERT_ID", "ERT_DES", "ERT_STS", cbo_ert_id);
+        FWGNR.VerificaStatus(dsEntrelacamento, "ERT_ID", "ERT_DES", "ERT_STS", cbo_ert_id_rel);
+        dsEntrelacamento.Dispose();
+    }
+
+    protected string CriaFiltro(Analise Analise)
+    {
+        string filtro = "";
+        if (!String.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise.ANS_LOT = txt_lot.Text;
+            filtro = filtro + "Lote= " + txt_lot.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_tit_poy_id.Text))
+        {
+            Analise.ANS_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id.SelectedValue);
+            filtro = filtro + "Título= " + cbo_tit_poy_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_aps_id.Text))
+        {
+            Analise.ANS_APS_ID = Convert.ToInt32(cbo_aps_id.SelectedValue);
+            filtro = filtro + "Apresentação= " + cbo_aps_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_maq_id.Text))
+        {
+            Analise.ANS_MAQ_ID = Convert.ToInt32(cbo_maq_id.SelectedValue);
+            filtro = filtro + "Máquina= " + cbo_maq_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_ert_id.Text))
+        {
+            Analise.ANS_ERT_ID = Convert.ToInt32(cbo_ert_id.SelectedValue);
+            filtro = filtro + "Entrelaçamento= " + cbo_ert_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_sts.Text))
+        {
+            Analise.ANS_STS = Convert.ToInt32(cbo_sts.SelectedValue);
+            filtro = filtro + "Status= " + cbo_sts.SelectedItem.Text + "; ";
+        }
+
+        String sFiltro = "";
+        foreach (System.Web.UI.WebControls.ListItem ans_tip in cbo_ans_tip.Items)
+        {
+            if (ans_tip.Selected)
+            {
+                Analise.LST_ANS_TIP = Analise.LST_ANS_TIP + "'" + ans_tip.Value + "', ";
+                sFiltro = sFiltro + " " + ans_tip.Text + "; ";
+            }
+        }
+        if (!String.IsNullOrEmpty(Analise.LST_ANS_TIP))
+        {
+            //Retira ", " final
+            Analise.LST_ANS_TIP = Analise.LST_ANS_TIP.Substring(0, Analise.LST_ANS_TIP.Length - 2);
+            filtro = filtro + "Tipo de Análise= " + sFiltro;
+        }
+        return filtro;
+    }
+
+    protected void btProcurar_Click(object sender, EventArgs e)
+    {
+        string filtro = "";
+
+        Analise AnaliseMedia = new Analise();
+        filtro = CriaFiltro(AnaliseMedia);
+        DataSet dsAnaliseMedia = AnaliseMedia.ConsultarMedia();
+        
+        if ((dsAnaliseMedia.Tables[0].Rows.Count > 0) && (dsAnaliseMedia.Tables[0].Rows[0]["NUM"].ToString() != "0"))
+        {
+            txt_lot_rel.Text = txt_lot.Text;
+            cbo_tit_poy_id_rel.SelectedValue = cbo_tit_poy_id.SelectedValue;
+            cbo_aps_id_rel.SelectedValue = cbo_aps_id.SelectedValue;
+            cbo_maq_id_rel.SelectedValue = cbo_maq_id.SelectedValue;
+            cbo_ert_id_rel.SelectedValue = cbo_ert_id.SelectedValue;
+
+            lbl_num.Text = dsAnaliseMedia.Tables[0].Rows[0]["NUM"].ToString();
+
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED"].ToString()))
+            {
+                txt_tit_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED"].ToString()))
+            {
+                txt_tnc_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED"].ToString()))
+            {
+                txt_aon_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED"].ToString()))
+            {
+                txt_enm_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED"].ToString()))
+            {
+                txt_eee_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED"].ToString()))
+            {
+                txt_kkk_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED"].ToString()))
+            {
+                txt_bbb_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED"].ToString()))
+            {
+                    txt_pue_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED"].ToString()))
+            {
+                txt_ole_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED"].ToString()))
+            {
+                txt_trq_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED"].ToString()))
+            {
+                txt_ert_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MED"].ToString()))
+            {
+                txt_rt3_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MED"].ToString()))
+            {
+                txt_rt5_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PES_MED"].ToString()))
+            {
+                txt_pes_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PES_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED"].ToString()))
+            {
+                txt_dmo_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED"].ToString()).ToString("0.00");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED"].ToString()))
+            {
+                txt_dnd_med.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED"].ToString()).ToString("0.00");
+            }
+
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED_DSV"].ToString()))
+            {
+                txt_tit_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED_DSV"].ToString()))
+            {
+                txt_tnc_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED_DSV"].ToString()))
+            {
+                txt_aon_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED_DSV"].ToString()))
+            {
+                txt_enm_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED_DSV"].ToString()))
+            {
+                txt_eee_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED_DSV"].ToString()))
+            {
+                txt_kkk_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED_DSV"].ToString()))
+            {
+                txt_bbb_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED_DSV"].ToString()))
+            {
+                txt_pue_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED_DSV"].ToString()))
+            {
+                txt_ole_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED_DSV"].ToString()))
+            {
+                txt_trq_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED_DSV"].ToString()))
+            {
+                txt_ert_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MED_DSV"].ToString()))
+            {
+                txt_rt3_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MED_DSV"].ToString()))
+            {
+                txt_rt5_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PES_MED_DSV"].ToString()))
+            {
+                txt_pes_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PES_MED_DSV"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED_DSV"].ToString()))
+            {
+                txt_dmo_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED_DSV"].ToString()).ToString("0.00");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED_DSV"].ToString()))
+            {
+                txt_dnd_dsv.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED_DSV"].ToString()).ToString("0.00");
+            }
+ 
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MIN"].ToString()))
+            {
+                txt_tit_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MIN"].ToString()))
+            {
+                txt_tnc_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["AON_MIN"].ToString()))
+            {
+                txt_aon_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["AON_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MIN"].ToString()))
+            {
+                txt_enm_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MIN"].ToString()))
+            {
+                txt_eee_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MIN"].ToString()))
+            {
+                txt_kkk_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MIN"].ToString()))
+            {
+                txt_bbb_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MIN"].ToString()))
+            {
+                txt_pue_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MIN"].ToString()))
+            {
+                txt_ole_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MIN"].ToString()))
+            {
+                txt_trq_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MIN"].ToString()))
+            {
+                txt_ert_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MIN"].ToString()))
+            {
+                txt_rt3_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MIN"].ToString()))
+            {
+                txt_rt5_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PES_MIN"].ToString()))
+            {
+                txt_pes_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PES_MIN"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MIN"].ToString()))
+            {
+                txt_dmo_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MIN"].ToString()).ToString("0.00");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DND_MIN"].ToString()))
+            {
+                txt_dnd_min.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DND_MIN"].ToString()).ToString("0.00");
+            }
+
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MAX"].ToString()))
+            {
+                txt_tit_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MAX"].ToString()))
+            {
+                txt_tnc_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["AON_MAX"].ToString()))
+            {
+                txt_aon_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["AON_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MAX"].ToString()))
+            {
+                txt_enm_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MAX"].ToString()))
+            {
+                txt_eee_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MAX"].ToString()))
+            {
+                txt_kkk_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MAX"].ToString()))
+            {
+                txt_bbb_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MAX"].ToString()))
+            {
+                txt_pue_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MAX"].ToString()))
+            {
+                txt_ole_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MAX"].ToString()))
+            {
+                txt_trq_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MAX"].ToString()))
+            {
+                txt_ert_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MAX"].ToString()))
+            {
+                txt_rt3_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT3_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MAX"].ToString()))
+            {
+                txt_rt5_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["RT5_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PES_MAX"].ToString()))
+            {
+                txt_pes_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PES_MAX"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MAX"].ToString()))
+            {
+                txt_dmo_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MAX"].ToString()).ToString("0.00");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DND_MAX"].ToString()))
+            {
+                txt_dnd_max.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DND_MAX"].ToString()).ToString("0.00");
+            }
+        }
+        else
+        {
+            lbl_num.Text = "0";
+        }
+
+        dsAnaliseMedia.Dispose();
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+        gvAnalise.DataSource = dsAnalise;
+        gvAnalise.DataBind();
+        dsAnalise.Dispose();
+        Dispose();
+
+        dvFiltro.Visible = false;
+        dvResultado.Visible = true;
+    }
+    
+    protected void gvAnalise_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            e.Row.Attributes.Add("onMouseOver", "this.className='selecionado';");
+            if ((e.Row.RowIndex % 2) == 0)
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_par';");
+            }
+            else
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_impar';");
+            }
+            //if (!string.IsNullOrEmpty(Origem.Value))
+                //e.Row.Attributes.Add("onClick", "JavaScript:retornaSelecao('" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "', '" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "');");
+            //else
+            e.Row.Attributes.Add("onClick", "JavaScript:window.top.frameprincipal.location = 'RelatorioAnalise.aspx?rowId=" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "'");
+        }
+    }
+
+    private SortDirection GridViewSortDirection
+    {
+        get
+        {
+            if (ViewState["sortDirection"] == null)
+                ViewState["sortDirection"] = SortDirection.Ascending;
+            return (SortDirection)ViewState["sortDirection"];
+        }
+        set { ViewState["sortDirection"] = value; }
+    }
+
+    private int GetSortColumnIndex()
+    {
+        foreach (DataControlField field in gvAnalise.Columns)
+        {
+            if (field.SortExpression == (string)ViewState["SortExpression"])
+            {
+                return gvAnalise.Columns.IndexOf(field);
+            }
+        }
+        return -1;
+    }
+
+    private void AddSortImage(int columnIndex, GridViewRow headerRow)
+    {
+        System.Web.UI.WebControls.Image sortImage = new System.Web.UI.WebControls.Image();
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            sortImage.ImageUrl = "img/arrow_down.gif";
+            sortImage.AlternateText = "Ordem Ascendente";
+        }
+        else
+        {
+            sortImage.ImageUrl = "img/arrow_up.gif";
+            sortImage.AlternateText = "Ordem Descendente";
+        }
+        headerRow.Cells[columnIndex].Controls.Add(sortImage);
+    }
+
+    protected void gvAnalise_RowCreated(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            int sortColumnIndex = GetSortColumnIndex();
+            if (sortColumnIndex != -1)
+            {
+                AddSortImage(sortColumnIndex, e.Row);
+            }
+        }
+    }
+
+    protected void gvAnalise_Sorting(Object sender, GridViewSortEventArgs e)
+    {
+        string Ordem = " ASC ";
+        string sortExpression = e.SortExpression;
+        ViewState["SortExpression"] = sortExpression;
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            GridViewSortDirection = SortDirection.Descending;
+            Ordem = " DESC ";
+        }
+        else
+        {
+            GridViewSortDirection = SortDirection.Ascending;
+            Ordem = " ASC ";
+        }
+
+        string filtro = "";
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        DataTable dtAnalise = dsAnalise.Tables[0];
+        DataView dvAnalise = new DataView(dtAnalise);
+        dvAnalise.Sort = e.SortExpression + Ordem;
+        gvAnalise.DataSource = dvAnalise;
+        gvAnalise.DataBind();
+
+        dvAnalise.Dispose();
+        dtAnalise.Dispose();
+        dsAnalise.Dispose();
+        Dispose();
+    }
+
+    private void TratamentoErro(string erro)
+    {
+        if (!string.IsNullOrEmpty(erro))
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "AlertErro", "alert('" + erro + "');", true);
+    }
+
+    protected void btConsultar_Click(object sender, EventArgs e)
+    {
+ 
+        Dynafil Dynafil = new Dynafil();
+        if (!String.IsNullOrEmpty(cbo_tit_poy_id_rel.Text))
+        {
+            Dynafil.DNF_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id_rel.SelectedValue);
+        }
+        DataSet dsDynafil = Dynafil.ConsultarMediaTotal();
+
+        if (dsDynafil.Tables[0].Rows.Count > 0)
+        {
+            lbl_num.Text = dsDynafil.Tables[0].Rows[0]["QTD_ANS"].ToString();
+            txt_tit_min.Text = dsDynafil.Tables[0].Rows[0]["TIT_MIN"].ToString();
+            txt_tit_med.Text = dsDynafil.Tables[0].Rows[0]["TIT_MED"].ToString();
+            txt_tit_max.Text = dsDynafil.Tables[0].Rows[0]["TIT_MAX"].ToString();
+            txt_tnc_min.Text = dsDynafil.Tables[0].Rows[0]["TNC_MIN"].ToString();
+            txt_tnc_med.Text = dsDynafil.Tables[0].Rows[0]["TNC_MED"].ToString();
+            txt_tnc_max.Text = dsDynafil.Tables[0].Rows[0]["TNC_MAX"].ToString();
+            txt_aon_min.Text = dsDynafil.Tables[0].Rows[0]["AON_MIN"].ToString();
+            txt_aon_med.Text = dsDynafil.Tables[0].Rows[0]["AON_MED"].ToString();
+            txt_aon_max.Text = dsDynafil.Tables[0].Rows[0]["AON_MAX"].ToString();
+            txt_enm_min.Text = dsDynafil.Tables[0].Rows[0]["ENM_MIN"].ToString();
+            txt_enm_med.Text = dsDynafil.Tables[0].Rows[0]["ENM_MED"].ToString();
+            txt_enm_max.Text = dsDynafil.Tables[0].Rows[0]["ENM_MAX"].ToString();
+            txt_eee_min.Text = dsDynafil.Tables[0].Rows[0]["EEE_MIN"].ToString();
+            txt_eee_med.Text = dsDynafil.Tables[0].Rows[0]["EEE_MED"].ToString();
+            txt_eee_max.Text = dsDynafil.Tables[0].Rows[0]["EEE_MAX"].ToString();
+            txt_kkk_min.Text = dsDynafil.Tables[0].Rows[0]["KKK_MIN"].ToString();
+            txt_kkk_med.Text = dsDynafil.Tables[0].Rows[0]["KKK_MED"].ToString();
+            txt_kkk_max.Text = dsDynafil.Tables[0].Rows[0]["KKK_MAX"].ToString();
+            txt_bbb_min.Text = dsDynafil.Tables[0].Rows[0]["BBB_MIN"].ToString();
+            txt_bbb_med.Text = dsDynafil.Tables[0].Rows[0]["BBB_MED"].ToString();
+            txt_bbb_max.Text = dsDynafil.Tables[0].Rows[0]["BBB_MAX"].ToString();
+        }
+
+        dsDynafil.Dispose();
+        Dispose();
+
+    }
+
+    protected void txt_lot_OnTextChanged(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise Analise = new Analise();
+            Analise.ANS_LOT = txt_lot.Text;
+            DataSet dsAnalise = Analise.Consultar();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                txt_lot.Text = dsAnalise.Tables[0].Rows[0]["ANS_LOT"].ToString();
+                cbo_tit_poy_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_TIT_POY_ID"].ToString();
+                cbo_aps_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_APS_ID"].ToString();
+                //cbo_maq_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_MAQ_ID"].ToString();
+                cbo_ert_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_ERT_ID"].ToString();
+            }
+        }
+    }
+}

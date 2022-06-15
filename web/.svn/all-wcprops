@@ -1,0 +1,905 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/FWUNF_DSV/!svn/ver/216/sources/FWUNF_DSV/web
+END
+RelatorioViradaMaquina.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/FWUNF_DSV/!svn/ver/287/sources/FWUNF_DSV/web/RelatorioViradaMaquina.aspx.cs
+END
+GeraPaginaTabela.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/GeraPaginaTabela.aspx.cs
+END
+SemPermissao.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SemPermissao.aspx.cs
+END
+Analise.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/Analise.aspx
+END
+SegurancaPermissoes.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaPermissoes.aspx
+END
+RelatorioStandard.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioStandard.aspx.cs
+END
+Teste.aspx - Cópia.cs
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/FWUNF_DSV/!svn/ver/82/sources/FWUNF_DSV/web/Teste.aspx%20-%20C%C3%B3pia.cs
+END
+CadastroObservacao.ascx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroObservacao.ascx
+END
+RelatorioAnaliseParcial.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioAnaliseParcial.aspx
+END
+RelatorioFimDeEvento.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioFimDeEvento.aspx.cs
+END
+Dynafil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/Dynafil.aspx.cs
+END
+CadastroObservacao.ascx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroObservacao.ascx.cs
+END
+RelatorioViradaTempo.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/275/sources/FWUNF_DSV/web/RelatorioViradaTempo.aspx
+END
+RelatorioComparacaoDynafil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioComparacaoDynafil.aspx
+END
+LancamentoMaquina.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/FWUNF_DSV/!svn/ver/282/sources/FWUNF_DSV/web/LancamentoMaquina.aspx
+END
+RelatorioPlanejamentoMensal.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioPlanejamentoMensal.aspx
+END
+Standard.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/Standard.aspx
+END
+Finaliza.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Finaliza.aspx.cs
+END
+GeraMenu.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/GeraMenu.aspx
+END
+Standard.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/Standard.aspx.cs
+END
+Afinidade.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/Afinidade.aspx
+END
+Web.config
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/248/sources/FWUNF_DSV/web/Web.config
+END
+Banner.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Banner.aspx.cs
+END
+RelatorioAfinidadeAnalitico.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioAfinidadeAnalitico.aspx.cs
+END
+CadastroPermissoes.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroPermissoes.aspx.cs
+END
+SegurancaUsuario.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/40/sources/FWUNF_DSV/web/SegurancaUsuario.aspx
+END
+ApresentaAnexo.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/ApresentaAnexo.aspx.cs
+END
+SegurancaUsuario.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/SegurancaUsuario.aspx.cs
+END
+Default.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/247/sources/FWUNF_DSV/web/Default.aspx
+END
+RelatorioMotivosDesclassificacao.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioMotivosDesclassificacao.aspx.cs
+END
+RelatorioComparacaoProdutos.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/242/sources/FWUNF_DSV/web/RelatorioComparacaoProdutos.aspx
+END
+Finaliza.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Finaliza.aspx
+END
+RelatorioCertificadoAnalise.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioCertificadoAnalise.aspx.cs
+END
+SegurancaMenu.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaMenu.aspx.cs
+END
+SegurancaFuncao.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaFuncao.aspx
+END
+Banner.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Banner.aspx
+END
+Performance.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Performance.aspx.cs
+END
+Erro.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Erro.aspx
+END
+GeraMenu.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/GeraMenu.aspx.cs
+END
+RelatorioDynafil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/web/RelatorioDynafil.aspx
+END
+RelatorioPercentualMotivos.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/FWUNF_DSV/!svn/ver/148/sources/FWUNF_DSV/web/RelatorioPercentualMotivos.aspx.cs
+END
+Operador.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/250/sources/FWUNF_DSV/web/Operador.aspx
+END
+Analise.aspx.cs.bak
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/Analise.aspx.cs.bak
+END
+ApresentaAnexo.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/ApresentaAnexo.aspx
+END
+GeraClasse.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/GeraClasse.aspx.cs
+END
+SegurancaPerfil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaPerfil.aspx.cs
+END
+RelatorioAfinidadeVirada.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioAfinidadeVirada.aspx.cs
+END
+RelatorioResultado.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioResultado.aspx
+END
+Teste.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/Teste.aspx
+END
+RelatorioAfinidadeMensal.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioAfinidadeMensal.aspx.cs
+END
+EspecificacaoDynafil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/web/EspecificacaoDynafil.aspx.cs
+END
+RelatorioEtiquetaVirada.aspx.zip
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/274/sources/FWUNF_DSV/web/RelatorioEtiquetaVirada.aspx.zip
+END
+SegurancaMenu.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaMenu.aspx
+END
+RelatorioEtiquetaVirada.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/285/sources/FWUNF_DSV/web/RelatorioEtiquetaVirada.aspx.cs
+END
+RelatorioResultadoDynafil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioResultadoDynafil.aspx.cs
+END
+RelatorioEventoCategoria.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/FWUNF_DSV/!svn/ver/137/sources/FWUNF_DSV/web/RelatorioEventoCategoria.aspx
+END
+RelatorioAnalise.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioAnalise.aspx.cs
+END
+RelatorioPlanejamentoMensal.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioPlanejamentoMensal.aspx.cs
+END
+RelatorioEventoCategoria.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/148/sources/FWUNF_DSV/web/RelatorioEventoCategoria.aspx.cs
+END
+GeraPaginaTabela.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/GeraPaginaTabela.aspx
+END
+SemPermissao.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SemPermissao.aspx
+END
+RelatorioStandardLote.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioStandardLote.aspx.cs
+END
+CadastroPermissoes.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroPermissoes.aspx
+END
+CadastroAnexo.ascx
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroAnexo.ascx
+END
+Operador.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/248/sources/FWUNF_DSV/web/Operador.aspx.cs
+END
+Titulo.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/31/sources/FWUNF_DSV/web/Titulo.aspx
+END
+RelatorioMotivosDesclassificacao.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioMotivosDesclassificacao.aspx
+END
+ErroGenerico.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/ErroGenerico.aspx
+END
+Titulo.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/52/sources/FWUNF_DSV/web/Titulo.aspx.cs
+END
+RelatorioAfinidadeMensal.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioAfinidadeMensal.aspx
+END
+EspecificacaoDynafil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/web/EspecificacaoDynafil.aspx
+END
+RelatorioControleEstatistico.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioControleEstatistico.aspx.cs
+END
+RelatorioResultado.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioResultado.aspx.cs
+END
+RelatorioCertificadoAnalise.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioCertificadoAnalise.aspx
+END
+RelatorioComparacaoProdutos.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/FWUNF_DSV/!svn/ver/242/sources/FWUNF_DSV/web/RelatorioComparacaoProdutos.aspx.cs
+END
+ParametroAnalise.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/230/sources/FWUNF_DSV/web/ParametroAnalise.aspx.cs
+END
+RelatorioAnalise.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioAnalise.aspx
+END
+RelatorioAnaliseParcial.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/154/sources/FWUNF_DSV/web/RelatorioAnaliseParcial.aspx.cs
+END
+RelatorioFalhasOLT.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioFalhasOLT.aspx
+END
+RelatorioStandardLote.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/FWUNF_DSV/!svn/ver/104/sources/FWUNF_DSV/web/RelatorioStandardLote.aspx
+END
+CadastroUsuario.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroUsuario.aspx
+END
+AlterarSenha.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/AlterarSenha.aspx
+END
+SegurancaPerfil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaPerfil.aspx
+END
+Endereco.ascx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Endereco.ascx.cs
+END
+CadastroUsuario.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroUsuario.aspx.cs
+END
+DOFF.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/DOFF.aspx
+END
+Especificacao.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/Especificacao.aspx
+END
+UpgradeLog.XML
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/UpgradeLog.XML
+END
+Analise.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/Analise.aspx.cs
+END
+RelatorioEspecificacaoLote.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/171/sources/FWUNF_DSV/web/RelatorioEspecificacaoLote.aspx
+END
+ErroGenerico.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/ErroGenerico.aspx.cs
+END
+Home.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Home.aspx
+END
+RelatorioDistribuicaoVirada.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/279/sources/FWUNF_DSV/web/RelatorioDistribuicaoVirada.aspx
+END
+RelatorioRTS.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioRTS.aspx
+END
+RelatorioResultadoDynafil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/RelatorioResultadoDynafil.aspx
+END
+Home.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Home.aspx.cs
+END
+OLT.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/123/sources/FWUNF_DSV/web/OLT.aspx
+END
+Funcao.ascx
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Funcao.ascx
+END
+RelatorioViradaTempo.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/FWUNF_DSV/!svn/ver/276/sources/FWUNF_DSV/web/RelatorioViradaTempo.aspx.cs
+END
+RelatorioFalhasOLTNovo.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioFalhasOLTNovo.aspx
+END
+BemVindo.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/BemVindo.aspx
+END
+RelatorioFalhasOLTNovo.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/RelatorioFalhasOLTNovo.aspx.cs
+END
+CadastroPerfil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroPerfil.aspx.cs
+END
+RTS.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RTS.aspx
+END
+Afinidade.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/248/sources/FWUNF_DSV/web/Afinidade.aspx.cs
+END
+RTS.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RTS.aspx.cs
+END
+RelatorioStandard.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioStandard.aspx
+END
+Global.asax
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Global.asax
+END
+RelatorioControleEstatistico.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/RelatorioControleEstatistico.aspx
+END
+CadastroAnexo.ascx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroAnexo.ascx.cs
+END
+RelatorioEspecificacaoLote.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/FWUNF_DSV/!svn/ver/157/sources/FWUNF_DSV/web/RelatorioEspecificacaoLote.aspx.cs
+END
+Web_001.config
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/Web_001.config
+END
+Default.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/Default.aspx.cs
+END
+GeraPagina.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/GeraPagina.aspx
+END
+FWBDS.Afinidade.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/FWBDS.Afinidade.cs
+END
+RelatorioFalhasOLT.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/FWUNF_DSV/!svn/ver/211/sources/FWUNF_DSV/web/RelatorioFalhasOLT.aspx.cs
+END
+RelatorioPercentualMotivos.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/FWUNF_DSV/!svn/ver/155/sources/FWUNF_DSV/web/RelatorioPercentualMotivos.aspx
+END
+BemVindo.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/BemVindo.aspx.cs
+END
+DistribuicaoVirada.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/FWUNF_DSV/!svn/ver/284/sources/FWUNF_DSV/web/DistribuicaoVirada.aspx
+END
+SegurancaFuncao.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaFuncao.aspx.cs
+END
+RelatorioAfinidadeAnalitico.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioAfinidadeAnalitico.aspx
+END
+DistribuicaoVirada.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/FWUNF_DSV/!svn/ver/284/sources/FWUNF_DSV/web/DistribuicaoVirada.aspx.cs
+END
+RelatorioAfinidadeVirada.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioAfinidadeVirada.aspx
+END
+DOFF.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/DOFF.aspx.cs
+END
+Especificacao.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/245/sources/FWUNF_DSV/web/Especificacao.aspx.cs
+END
+RelatorioViradaTempo.zip
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/274/sources/FWUNF_DSV/web/RelatorioViradaTempo.zip
+END
+Dynafil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/web/Dynafil.aspx
+END
+SegurancaPermissoes.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/SegurancaPermissoes.aspx.cs
+END
+RelatorioFimDeEvento.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/RelatorioFimDeEvento.aspx
+END
+ParametroAnalise.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/230/sources/FWUNF_DSV/web/ParametroAnalise.aspx
+END
+Teste.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/219/sources/FWUNF_DSV/web/Teste.aspx.cs
+END
+Standard.aspx.cs.bak
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/Standard.aspx.cs.bak
+END
+Performance.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/234/sources/FWUNF_DSV/web/Performance.aspx
+END
+Funcao.ascx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Funcao.ascx.cs
+END
+CadastroPerfil.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/CadastroPerfil.aspx
+END
+OLT.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/153/sources/FWUNF_DSV/web/OLT.aspx.cs
+END
+RelatorioViradaMaquina.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/FWUNF_DSV/!svn/ver/263/sources/FWUNF_DSV/web/RelatorioViradaMaquina.aspx
+END
+Endereco.ascx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Endereco.ascx
+END
+GeraClasse.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/GeraClasse.aspx
+END
+Erro.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/Erro.aspx.cs
+END
+RelatorioDynafil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/web/RelatorioDynafil.aspx.cs
+END
+AlterarSenha.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/web/AlterarSenha.aspx.cs
+END
+website.publishproj
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/website.publishproj
+END
+RelatorioEtiquetaVirada.aspx
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/FWUNF_DSV/!svn/ver/285/sources/FWUNF_DSV/web/RelatorioEtiquetaVirada.aspx
+END
+RelatorioRTS.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/154/sources/FWUNF_DSV/web/RelatorioRTS.aspx.cs
+END
+RelatorioDistribuicaoVirada.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/FWUNF_DSV/!svn/ver/289/sources/FWUNF_DSV/web/RelatorioDistribuicaoVirada.aspx.cs
+END
+RelatorioComparacaoDynafil.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/FWUNF_DSV/!svn/ver/243/sources/FWUNF_DSV/web/RelatorioComparacaoDynafil.aspx.cs
+END
+LancamentoMaquina.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/282/sources/FWUNF_DSV/web/LancamentoMaquina.aspx.cs
+END
+GeraPagina.aspx.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/229/sources/FWUNF_DSV/web/GeraPagina.aspx.cs
+END
+sql.txt
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/186/sources/FWUNF_DSV/web/sql.txt
+END

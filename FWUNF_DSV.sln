@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "web", "web\", "{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "Svn"
+		SccAuxPath = "Svn"
+		SccLocalPath = "Svn"
+		SccProvider = "SubversionScc"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		ProjectReferences = "{1a798f38-4b9f-413b-9b9f-24f164d437ab}|FWBDS.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/Web"
+		Debug.AspNetCompiler.PhysicalPath = "web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Web"
+		Release.AspNetCompiler.PhysicalPath = "web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "52501"
+		SlnRelativePath = "web\"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB} = {1A798F38-4B9F-413B-9B9F-24F164D437AB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWBDS", "FWBDS\FWBDS.csproj", "{1A798F38-4B9F-413B-9B9F-24F164D437AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Release|.NET = Release|.NET
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Release|.NET.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E99C5AF6-3325-4AFE-A0FE-B74A55068A3C}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Release|.NET.ActiveCfg = Release|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1A798F38-4B9F-413B-9B9F-24F164D437AB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FCD610D0-CF55-4405-A069-9E22F8A532FC}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal

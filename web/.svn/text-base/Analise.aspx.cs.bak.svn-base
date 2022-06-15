@@ -1,0 +1,3044 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.IO;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+
+using FWBDS;
+
+public partial class _Default : System.Web.UI.Page
+{
+    private bool _bFora;
+    private string _sFora;
+
+    public bool bFora
+    {
+        get { return _bFora; }
+        set { _bFora = value; }
+    }
+    public string sFora
+    {
+        get { return _sFora; }
+        set { _sFora = value; }
+    }
+    
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Request["rowId"] != null)
+            rowId.Value = Request["rowId"].ToString();
+
+        if (Request["Origem"] != null)
+            Origem.Value = Request["Origem"].ToString();
+
+        if (!IsPostBack)
+        {
+            if (!String.IsNullOrEmpty(Origem.Value))
+            {
+                ucBarra.Visible = false;
+                btNovoFiltro.Visible = false;
+                btNovoFiltroGrid.Visible = false;
+                Form.Style.Add("width", "550");
+                Form.Style.Add("height", "200");
+            }
+
+            FormataControles();
+            CarregaControles();
+            CarregaDados();
+        }
+    }
+
+    protected void FormataControles()
+    {
+        txt_dat.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+        txt_dat_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat_inc.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+        txt_pos_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_to1_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aps_pes_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda(this);");
+        txt_aps_pes_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aps_dmo_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda(this);");
+        txt_aps_dmo_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_001_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_001_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pos_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to1_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_002_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_002_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pos_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to1_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_003_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_003_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pos_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to1_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_004_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_004_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pos_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to1_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_005_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_005_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pos_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_numero();");
+        txt_tit_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tit_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_tnc_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_tnc_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_aon_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_aon_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe1_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe1_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe2_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe2_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pe3_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pe3_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po1_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po1_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po2_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po2_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_po3_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_po3_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_enm_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_enm_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_eee_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_eee_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_kkk_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_kkk_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_bbb_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_bbb_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pue_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pue_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ole_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ole_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to1_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to2_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to2_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_to3_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_to3_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te1_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te1_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te2_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te2_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_te3_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_te3_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_trq_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moedanegativo();");
+        txt_trq_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_ert_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_ert_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt3_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt3_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_rt5_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_rt5_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_pes_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_pes_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dmo_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dmo_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cma_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cma_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_cme_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_cme_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+        txt_dnd_006_inc.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_moeda();");
+        txt_dnd_006_inc.Attributes.Add("onBlur", "javascript:f_formata_valor(this);");
+    }
+
+    protected void CarregaControles()
+    {
+        Titulo Titulo = new Titulo();
+        Titulo.TIT_POY_TIP = "T"; //Somente Texturizados
+        DataSet dsTitulo = Titulo.Consultar();
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id);
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id_inc);
+        dsTitulo.Dispose();
+
+        Apresentacao Apresentacao = new Apresentacao();
+        DataSet dsApresentacao = Apresentacao.Consultar();
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id);
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id_inc);
+        dsApresentacao.Dispose();
+
+        Maquina Maquina = new Maquina();
+        DataSet dsMaquina = Maquina.Consultar();
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id);
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id_inc);
+        dsMaquina.Dispose();
+
+        Entrelacamento Entrelacamento = new Entrelacamento();
+        DataSet dsEntrelacamento = Entrelacamento.Consultar();
+        FWGNR.VerificaStatus(dsEntrelacamento, "ERT_ID", "ERT_DES", "ERT_STS", cbo_ert_id_inc);
+        dsEntrelacamento.Dispose();
+
+    }
+
+    protected void CarregaDados()
+    {
+        if (!string.IsNullOrEmpty(rowId.Value))
+        {
+            lbAcao.Text = "Alterar";
+            divCadastro.Visible = true;
+            dvFiltro.Visible = false;
+
+            txt_dat_inc.Focus();
+
+            Analise Analise = new Analise();
+            Analise.ANS_ID = Convert.ToInt32(rowId.Value);
+            DataSet dsAnalise = Analise.Consultar();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                txt_dat_inc.Text = Convert.ToDateTime(dsAnalise.Tables[0].Rows[0]["ANS_DAT"].ToString()).ToString("dd/MM/yyyy");
+                txt_lot_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_LOT"].ToString();
+                chk_lot_tst_inc.Checked = Convert.ToBoolean(Convert.ToInt32(dsAnalise.Tables[0].Rows[0]["ANS_LOT_TST"].ToString()));
+                CarregaLote();
+                cbo_tit_poy_id_inc.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_TIT_POY_ID"].ToString();
+                cbo_aps_id_inc.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_APS_ID"].ToString();
+                CarregaApresentacao();
+                cbo_maq_id_inc.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_MAQ_ID"].ToString();
+                cbo_ert_id_inc.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_ERT_ID"].ToString();
+                txt_vrd_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_VRD"].ToString();
+                txt_pos_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_001"].ToString();
+                txt_tit_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_001"].ToString();
+                txt_tnc_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_001"].ToString();
+                txt_aon_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_001"].ToString();
+                txt_enm_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_001"].ToString();
+                txt_eee_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_001"].ToString();
+                txt_kkk_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_001"].ToString();
+                txt_bbb_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_001"].ToString();
+                txt_pue_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_001"].ToString();
+                txt_ole_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_001"].ToString();
+                txt_trq_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_001"].ToString();
+                txt_ert_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_001"].ToString();
+                txt_rt3_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_001"].ToString();
+                txt_rt5_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_001"].ToString();
+                txt_pes_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_001"].ToString();
+                txt_dmo_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_001"].ToString();
+                txt_dnd_001_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_001"].ToString();
+                txt_pos_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_002"].ToString();
+                txt_tit_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_002"].ToString();
+                txt_tnc_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_002"].ToString();
+                txt_aon_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_002"].ToString();
+                txt_enm_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_002"].ToString();
+                txt_eee_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_002"].ToString();
+                txt_kkk_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_002"].ToString();
+                txt_bbb_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_002"].ToString();
+                txt_pue_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_002"].ToString();
+                txt_ole_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_002"].ToString();
+                txt_trq_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_002"].ToString();
+                txt_ert_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_002"].ToString();
+                txt_rt3_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_002"].ToString();
+                txt_rt5_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_002"].ToString();
+                txt_pes_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_002"].ToString();
+                txt_dmo_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_002"].ToString();
+                txt_dnd_002_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_002"].ToString();
+                txt_pos_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_003"].ToString();
+                txt_tit_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_003"].ToString();
+                txt_tnc_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_003"].ToString();
+                txt_aon_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_003"].ToString();
+                txt_enm_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_003"].ToString();
+                txt_eee_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_003"].ToString();
+                txt_kkk_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_003"].ToString();
+                txt_bbb_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_003"].ToString();
+                txt_pue_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_003"].ToString();
+                txt_ole_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_003"].ToString();
+                txt_trq_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_003"].ToString();
+                txt_ert_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_003"].ToString();
+                txt_rt3_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_003"].ToString();
+                txt_rt5_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_003"].ToString();
+                txt_pes_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_003"].ToString();
+                txt_dmo_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_003"].ToString();
+                txt_dnd_003_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_003"].ToString();
+                txt_pos_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_004"].ToString();
+                txt_tit_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_004"].ToString();
+                txt_tnc_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_004"].ToString();
+                txt_aon_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_004"].ToString();
+                txt_enm_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_004"].ToString();
+                txt_eee_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_004"].ToString();
+                txt_kkk_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_004"].ToString();
+                txt_bbb_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_004"].ToString();
+                txt_pue_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_004"].ToString();
+                txt_ole_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_004"].ToString();
+                txt_trq_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_004"].ToString();
+                txt_ert_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_004"].ToString();
+                txt_rt3_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_004"].ToString();
+                txt_rt5_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_004"].ToString();
+                txt_pes_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_004"].ToString();
+                txt_dmo_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_004"].ToString();
+                txt_dnd_004_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_004"].ToString(); 
+                txt_pos_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_005"].ToString();
+                txt_tit_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_005"].ToString();
+                txt_tnc_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_005"].ToString();
+                txt_aon_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_005"].ToString();
+                txt_enm_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_005"].ToString();
+                txt_eee_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_005"].ToString();
+                txt_kkk_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_005"].ToString();
+                txt_bbb_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_005"].ToString();
+                txt_pue_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_005"].ToString();
+                txt_ole_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_005"].ToString();
+                txt_trq_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_005"].ToString();
+                txt_ert_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_005"].ToString();
+                txt_rt3_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_005"].ToString();
+                txt_rt5_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_005"].ToString();
+                txt_pes_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_005"].ToString();
+                txt_dmo_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_005"].ToString();
+                txt_dnd_005_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_005"].ToString();
+                txt_pos_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_POS_006"].ToString();
+                txt_tit_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_006"].ToString();
+                txt_tnc_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_006"].ToString();
+                txt_aon_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_006"].ToString();
+                txt_enm_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_006"].ToString();
+                txt_eee_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_006"].ToString();
+                txt_kkk_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_006"].ToString();
+                txt_bbb_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_006"].ToString();
+                txt_pue_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_006"].ToString();
+                txt_ole_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_006"].ToString();
+                txt_trq_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_006"].ToString();
+                txt_ert_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_006"].ToString();
+                txt_rt3_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_006"].ToString();
+                txt_rt5_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_006"].ToString();
+                txt_pes_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_006"].ToString();
+                txt_dmo_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_006"].ToString();
+                txt_dnd_006_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_006"].ToString();
+                lb_tit_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_MED"].ToString();
+                lb_tnc_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_MED"].ToString();
+                lb_aon_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_MED"].ToString();
+                lb_enm_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_MED"].ToString();
+                lb_eee_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_MED"].ToString();
+                lb_kkk_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_MED"].ToString();
+                lb_bbb_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_MED"].ToString();
+                lb_pue_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_MED"].ToString();
+                lb_ole_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_MED"].ToString();
+                lb_trq_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_MED"].ToString();
+                lb_ert_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_MED"].ToString();
+                lb_rt3_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_MED"].ToString();
+                lb_rt5_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_MED"].ToString();
+                lb_pes_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_MED"].ToString();
+                lb_dmo_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_MED"].ToString();
+                lb_dnd_med_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_MED"].ToString();
+                lb_tit_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TIT_DSV"].ToString();
+                lb_tnc_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TNC_DSV"].ToString();
+                lb_aon_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_AON_DSV"].ToString();
+                lb_enm_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ENM_DSV"].ToString();
+                lb_eee_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_EEE_DSV"].ToString();
+                lb_kkk_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_KKK_DSV"].ToString();
+                lb_bbb_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_BBB_DSV"].ToString();
+                lb_pue_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PUE_DSV"].ToString();
+                lb_ole_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OLE_DSV"].ToString();
+                lb_trq_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_TRQ_DSV"].ToString();
+                lb_ert_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_ERT_DSV"].ToString();
+                lb_rt3_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT3_DSV"].ToString();
+                lb_rt5_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_RT5_DSV"].ToString();
+                lb_pes_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_PES_DSV"].ToString();
+                lb_dmo_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DMO_DSV"].ToString();
+                lb_dnd_dsv_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_DND_DSV"].ToString();
+                txt_obs_inc.Text = dsAnalise.Tables[0].Rows[0]["ANS_OBS"].ToString();
+                cbo_sts_inc.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_STS"].ToString();
+                ConfereLimites();
+            }
+            dsAnalise.Dispose();
+            Dispose();
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Origem.Value) && Origem.Value == "Nova")
+            {
+                divCadastro.Visible = true;
+                dvFiltro.Visible = false;
+                dvResultado.Visible = false;
+                btVoltar.Enabled = false;
+
+                txt_dat_inc.Focus();
+            }
+            else
+            {
+                divCadastro.Visible = false;
+                dvFiltro.Visible = true;
+
+                txt_dat.Focus();
+            }
+        }
+    }
+
+    private void LimpaTela()
+    {
+        txt_dat.Text = "";
+        txt_lot.Text = "";
+        cbo_tit_poy_id.Text = "";
+        cbo_aps_id.Text = "";
+        cbo_maq_id.Text = "";
+
+        txt_dat_inc.Text = "";
+        txt_lot_inc.Text = "";
+        chk_lot_tst_inc.Checked = false;
+        cbo_tit_poy_id_inc.SelectedIndex = 0;
+        cbo_aps_id_inc.SelectedIndex = 0;
+        cbo_maq_id_inc.SelectedIndex = 0;
+        cbo_ert_id_inc.SelectedIndex = 0;
+        txt_vrd_inc.Text = "";
+        txt_pos_001_inc.Text = "";
+        txt_tit_001_inc.Text = "";
+        txt_tnc_001_inc.Text = "";
+        txt_aon_001_inc.Text = "";
+        txt_pe1_001_inc.Text = "";
+        txt_pe2_001_inc.Text = "";
+        txt_pe3_001_inc.Text = "";
+        txt_po1_001_inc.Text = "";
+        txt_po2_001_inc.Text = "";
+        txt_po3_001_inc.Text = "";
+        txt_enm_001_inc.Text = "";
+        txt_eee_001_inc.Text = "";
+        txt_kkk_001_inc.Text = "";
+        txt_bbb_001_inc.Text = "";
+        txt_pue_001_inc.Text = "";
+        txt_ole_001_inc.Text = "";
+        txt_to1_001_inc.Text = "";
+        txt_to2_001_inc.Text = "";
+        txt_to3_001_inc.Text = "";
+        txt_te1_001_inc.Text = "";
+        txt_te2_001_inc.Text = "";
+        txt_te3_001_inc.Text = "";
+        txt_trq_001_inc.Text = "";
+        txt_ert_001_inc.Text = "";
+        txt_rt3_001_inc.Text = "";
+        txt_rt5_001_inc.Text = "";
+        txt_aps_pes_inc.Text = "";
+        txt_aps_dmo_inc.Text = "";
+        txt_pes_001_inc.Text = "";
+        txt_dmo_001_inc.Text = "";
+        txt_cma_001_inc.Text = "";
+        txt_cme_001_inc.Text = "";
+        txt_dnd_001_inc.Text = "";
+        txt_pos_002_inc.Text = "";
+        txt_tit_002_inc.Text = "";
+        txt_tnc_002_inc.Text = "";
+        txt_aon_002_inc.Text = "";
+        txt_pe1_002_inc.Text = "";
+        txt_pe2_002_inc.Text = "";
+        txt_pe3_002_inc.Text = "";
+        txt_po1_002_inc.Text = "";
+        txt_po2_002_inc.Text = "";
+        txt_po3_002_inc.Text = "";
+        txt_enm_002_inc.Text = "";
+        txt_eee_002_inc.Text = "";
+        txt_kkk_002_inc.Text = "";
+        txt_bbb_002_inc.Text = "";
+        txt_pue_002_inc.Text = "";
+        txt_ole_002_inc.Text = "";
+        txt_to1_002_inc.Text = "";
+        txt_to2_002_inc.Text = "";
+        txt_to3_002_inc.Text = "";
+        txt_te1_002_inc.Text = "";
+        txt_te2_002_inc.Text = "";
+        txt_te3_002_inc.Text = "";
+        txt_trq_002_inc.Text = "";
+        txt_ert_002_inc.Text = "";
+        txt_rt3_002_inc.Text = "";
+        txt_rt5_002_inc.Text = "";
+        txt_pes_002_inc.Text = "";
+        txt_dmo_002_inc.Text = "";
+        txt_cma_002_inc.Text = "";
+        txt_cme_002_inc.Text = "";
+        txt_dnd_002_inc.Text = "";
+        txt_pos_003_inc.Text = "";
+        txt_tit_003_inc.Text = "";
+        txt_tnc_003_inc.Text = "";
+        txt_aon_003_inc.Text = "";
+        txt_pe1_003_inc.Text = "";
+        txt_pe2_003_inc.Text = "";
+        txt_pe3_003_inc.Text = "";
+        txt_po1_003_inc.Text = "";
+        txt_po2_003_inc.Text = "";
+        txt_po3_003_inc.Text = "";
+        txt_enm_003_inc.Text = "";
+        txt_eee_003_inc.Text = "";
+        txt_kkk_003_inc.Text = "";
+        txt_bbb_003_inc.Text = "";
+        txt_pue_003_inc.Text = "";
+        txt_ole_003_inc.Text = "";
+        txt_to1_003_inc.Text = "";
+        txt_to2_003_inc.Text = "";
+        txt_to3_003_inc.Text = "";
+        txt_te1_003_inc.Text = "";
+        txt_te2_003_inc.Text = "";
+        txt_te3_003_inc.Text = "";
+        txt_trq_003_inc.Text = "";
+        txt_ert_003_inc.Text = "";
+        txt_rt3_003_inc.Text = "";
+        txt_rt5_003_inc.Text = "";
+        txt_pes_003_inc.Text = "";
+        txt_dmo_003_inc.Text = "";
+        txt_cma_003_inc.Text = "";
+        txt_cme_003_inc.Text = "";
+        txt_dnd_003_inc.Text = "";
+        txt_pos_004_inc.Text = "";
+        txt_tit_004_inc.Text = "";
+        txt_tnc_004_inc.Text = "";
+        txt_aon_004_inc.Text = "";
+        txt_pe1_004_inc.Text = "";
+        txt_pe2_004_inc.Text = "";
+        txt_pe3_004_inc.Text = "";
+        txt_po1_004_inc.Text = "";
+        txt_po2_004_inc.Text = "";
+        txt_po3_004_inc.Text = "";
+        txt_enm_004_inc.Text = "";
+        txt_eee_004_inc.Text = "";
+        txt_kkk_004_inc.Text = "";
+        txt_bbb_004_inc.Text = "";
+        txt_pue_004_inc.Text = "";
+        txt_ole_004_inc.Text = "";
+        txt_to1_004_inc.Text = "";
+        txt_to2_004_inc.Text = "";
+        txt_to3_004_inc.Text = "";
+        txt_te1_004_inc.Text = "";
+        txt_te2_004_inc.Text = "";
+        txt_te3_004_inc.Text = "";
+        txt_trq_004_inc.Text = "";
+        txt_ert_004_inc.Text = "";
+        txt_rt3_004_inc.Text = "";
+        txt_rt5_004_inc.Text = "";
+        txt_pes_004_inc.Text = "";
+        txt_dmo_004_inc.Text = "";
+        txt_cma_004_inc.Text = "";
+        txt_cme_004_inc.Text = "";
+        txt_dnd_004_inc.Text = "";
+        txt_pos_005_inc.Text = "";
+        txt_tit_005_inc.Text = "";
+        txt_tnc_005_inc.Text = "";
+        txt_aon_005_inc.Text = "";
+        txt_pe1_005_inc.Text = "";
+        txt_pe2_005_inc.Text = "";
+        txt_pe3_005_inc.Text = "";
+        txt_po1_005_inc.Text = "";
+        txt_po2_005_inc.Text = "";
+        txt_po3_005_inc.Text = "";
+        txt_enm_005_inc.Text = "";
+        txt_eee_005_inc.Text = "";
+        txt_kkk_005_inc.Text = "";
+        txt_bbb_005_inc.Text = "";
+        txt_pue_005_inc.Text = "";
+        txt_ole_005_inc.Text = "";
+        txt_to1_005_inc.Text = "";
+        txt_to2_005_inc.Text = "";
+        txt_to3_005_inc.Text = "";
+        txt_te1_005_inc.Text = "";
+        txt_te2_005_inc.Text = "";
+        txt_te3_005_inc.Text = "";
+        txt_trq_005_inc.Text = "";
+        txt_ert_005_inc.Text = "";
+        txt_rt3_005_inc.Text = "";
+        txt_rt5_005_inc.Text = "";
+        txt_pes_005_inc.Text = "";
+        txt_dmo_005_inc.Text = "";
+        txt_cma_005_inc.Text = "";
+        txt_cme_005_inc.Text = "";
+        txt_dnd_005_inc.Text = "";
+        txt_pos_006_inc.Text = "";
+        txt_tit_006_inc.Text = "";
+        txt_tnc_006_inc.Text = "";
+        txt_aon_006_inc.Text = "";
+        txt_pe1_006_inc.Text = "";
+        txt_pe2_006_inc.Text = "";
+        txt_pe3_006_inc.Text = "";
+        txt_po1_006_inc.Text = "";
+        txt_po2_006_inc.Text = "";
+        txt_po3_006_inc.Text = "";
+        txt_enm_006_inc.Text = "";
+        txt_eee_006_inc.Text = "";
+        txt_kkk_006_inc.Text = "";
+        txt_bbb_006_inc.Text = "";
+        txt_pue_006_inc.Text = "";
+        txt_ole_006_inc.Text = "";
+        txt_to1_006_inc.Text = "";
+        txt_to2_006_inc.Text = "";
+        txt_to3_006_inc.Text = "";
+        txt_te1_006_inc.Text = "";
+        txt_te2_006_inc.Text = "";
+        txt_te3_006_inc.Text = "";
+        txt_trq_006_inc.Text = "";
+        txt_ert_006_inc.Text = "";
+        txt_rt3_006_inc.Text = "";
+        txt_rt5_006_inc.Text = "";
+        txt_pes_006_inc.Text = "";
+        txt_dmo_006_inc.Text = "";
+        txt_cma_006_inc.Text = "";
+        txt_cme_006_inc.Text = "";
+        txt_dnd_006_inc.Text = "";
+
+        lb_tit_med_inc.Text = "";
+		lb_tit_dsv_inc.Text = "";
+		lb_tit_med_esp_inc.Text = "";
+		lb_tit_min_esp_inc.Text = "";
+        lb_tit_max_esp_inc.Text = "";
+        lb_tnc_med_inc.Text = "";
+        lb_tnc_dsv_inc.Text = "";
+        lb_tnc_med_esp_inc.Text = "";
+        lb_tnc_min_esp_inc.Text = "";
+        lb_tnc_max_esp_inc.Text = "";
+        lb_aon_med_inc.Text = "";
+        lb_aon_dsv_inc.Text = "";
+        lb_aon_med_esp_inc.Text = "";
+        lb_aon_min_esp_inc.Text = "";
+        lb_aon_max_esp_inc.Text = "";
+        lb_enm_med_inc.Text = "";
+        lb_enm_dsv_inc.Text = "";
+        lb_enm_med_esp_inc.Text = "";
+        lb_enm_min_esp_inc.Text = "";
+        lb_enm_max_esp_inc.Text = "";
+        lb_eee_med_inc.Text = "";
+        lb_eee_dsv_inc.Text = "";
+        lb_eee_med_esp_inc.Text = "";
+        lb_eee_min_esp_inc.Text = "";
+        lb_eee_max_esp_inc.Text = "";
+        lb_kkk_med_inc.Text = "";
+        lb_kkk_dsv_inc.Text = "";
+        lb_kkk_med_esp_inc.Text = "";
+        lb_kkk_min_esp_inc.Text = "";
+        lb_kkk_max_esp_inc.Text = "";
+        lb_bbb_med_inc.Text = "";
+        lb_bbb_dsv_inc.Text = "";
+        lb_bbb_med_esp_inc.Text = "";
+        lb_bbb_min_esp_inc.Text = "";
+        lb_bbb_max_esp_inc.Text = "";
+        lb_pue_med_inc.Text = "";
+        lb_pue_dsv_inc.Text = "";
+        lb_pue_med_esp_inc.Text = "";
+        lb_pue_min_esp_inc.Text = "";
+        lb_pue_max_esp_inc.Text = "";
+        lb_ole_med_inc.Text = "";
+        lb_ole_dsv_inc.Text = "";
+        lb_ole_med_esp_inc.Text = "";
+        lb_ole_min_esp_inc.Text = "";
+        lb_ole_max_esp_inc.Text = "";
+        lb_trq_med_inc.Text = "";
+        lb_trq_dsv_inc.Text = "";
+        lb_trq_med_esp_inc.Text = "";
+        lb_trq_min_esp_inc.Text = "";
+        lb_trq_max_esp_inc.Text = "";
+        lb_ert_med_inc.Text = "";
+        lb_ert_dsv_inc.Text = "";
+        lb_ert_med_esp_inc.Text = "";
+        lb_ert_min_esp_inc.Text = "";
+        lb_ert_max_esp_inc.Text = "";
+        lb_rt3_med_inc.Text = "";
+        lb_rt3_dsv_inc.Text = "";
+        lb_rt3_med_esp_inc.Text = "";
+        lb_rt3_min_esp_inc.Text = "";
+        lb_rt3_max_esp_inc.Text = "";
+        lb_rt5_med_inc.Text = "";
+        lb_rt5_dsv_inc.Text = "";
+        lb_rt5_med_esp_inc.Text = "";
+        lb_rt5_min_esp_inc.Text = "";
+        lb_rt5_max_esp_inc.Text = "";
+        lb_pes_med_inc.Text = "";
+        lb_pes_dsv_inc.Text = "";
+        lb_pes_med_esp_inc.Text = "";
+        lb_pes_min_esp_inc.Text = "";
+        lb_pes_max_esp_inc.Text = "";
+        lb_dmo_med_inc.Text = "";
+        lb_dmo_dsv_inc.Text = "";
+        lb_dmo_med_esp_inc.Text = "";
+        lb_dmo_min_esp_inc.Text = "";
+        lb_dmo_max_esp_inc.Text = "";        
+        lb_dnd_med_inc.Text = "";
+        lb_dnd_dsv_inc.Text = "";
+        lb_dnd_med_esp_inc.Text = "";
+        lb_dnd_min_esp_inc.Text = "";
+        lb_dnd_max_esp_inc.Text = "";
+
+        lb_tit_sts_001_inc.Text = "";
+        lb_tnc_sts_001_inc.Text = "";
+        lb_aon_sts_001_inc.Text = "";
+        lb_enm_sts_001_inc.Text = "";
+        lb_eee_sts_001_inc.Text = "";
+        lb_kkk_sts_001_inc.Text = "";
+        lb_bbb_sts_001_inc.Text = "";
+        lb_pue_sts_001_inc.Text = "";
+        lb_ole_sts_001_inc.Text = "";
+        lb_trq_sts_001_inc.Text = "";
+        lb_ert_sts_001_inc.Text = "";
+        lb_rt3_sts_001_inc.Text = "";
+        lb_rt5_sts_001_inc.Text = "";
+        lb_dnd_sts_001_inc.Text = "";
+        lb_tit_sts_002_inc.Text = "";
+        lb_tnc_sts_002_inc.Text = "";
+        lb_aon_sts_002_inc.Text = "";
+        lb_enm_sts_002_inc.Text = "";
+        lb_eee_sts_002_inc.Text = "";
+        lb_kkk_sts_002_inc.Text = "";
+        lb_bbb_sts_002_inc.Text = "";
+        lb_pue_sts_002_inc.Text = "";
+        lb_ole_sts_002_inc.Text = "";
+        lb_trq_sts_002_inc.Text = "";
+        lb_ert_sts_002_inc.Text = "";
+        lb_rt3_sts_002_inc.Text = "";
+        lb_rt5_sts_002_inc.Text = "";
+        lb_dnd_sts_002_inc.Text = "";
+        lb_tit_sts_003_inc.Text = "";
+        lb_tnc_sts_003_inc.Text = "";
+        lb_aon_sts_003_inc.Text = "";
+        lb_enm_sts_003_inc.Text = "";
+        lb_eee_sts_003_inc.Text = "";
+        lb_kkk_sts_003_inc.Text = "";
+        lb_bbb_sts_003_inc.Text = "";
+        lb_pue_sts_003_inc.Text = "";
+        lb_ole_sts_003_inc.Text = "";
+        lb_trq_sts_003_inc.Text = "";
+        lb_ert_sts_003_inc.Text = "";
+        lb_rt3_sts_003_inc.Text = "";
+        lb_rt5_sts_003_inc.Text = "";
+        lb_dnd_sts_003_inc.Text = "";
+        lb_tit_sts_004_inc.Text = "";
+        lb_tnc_sts_004_inc.Text = "";
+        lb_aon_sts_004_inc.Text = "";
+        lb_enm_sts_004_inc.Text = "";
+        lb_eee_sts_004_inc.Text = "";
+        lb_kkk_sts_004_inc.Text = "";
+        lb_bbb_sts_004_inc.Text = "";
+        lb_pue_sts_004_inc.Text = "";
+        lb_ole_sts_004_inc.Text = "";
+        lb_trq_sts_004_inc.Text = "";
+        lb_ert_sts_004_inc.Text = "";
+        lb_rt3_sts_004_inc.Text = "";
+        lb_rt5_sts_004_inc.Text = "";
+        lb_dnd_sts_004_inc.Text = "";
+        lb_tit_sts_005_inc.Text = "";
+        lb_tnc_sts_005_inc.Text = "";
+        lb_aon_sts_005_inc.Text = "";
+        lb_enm_sts_005_inc.Text = "";
+        lb_eee_sts_005_inc.Text = "";
+        lb_kkk_sts_005_inc.Text = "";
+        lb_bbb_sts_005_inc.Text = "";
+        lb_pue_sts_005_inc.Text = "";
+        lb_ole_sts_005_inc.Text = "";
+        lb_trq_sts_005_inc.Text = "";
+        lb_ert_sts_005_inc.Text = "";
+        lb_rt3_sts_005_inc.Text = "";
+        lb_rt5_sts_005_inc.Text = "";
+        lb_dnd_sts_005_inc.Text = "";
+        lb_tit_sts_006_inc.Text = "";
+        lb_tnc_sts_006_inc.Text = "";
+        lb_aon_sts_006_inc.Text = "";
+        lb_enm_sts_006_inc.Text = "";
+        lb_eee_sts_006_inc.Text = "";
+        lb_kkk_sts_006_inc.Text = "";
+        lb_bbb_sts_006_inc.Text = "";
+        lb_pue_sts_006_inc.Text = "";
+        lb_ole_sts_006_inc.Text = "";
+        lb_trq_sts_006_inc.Text = "";
+        lb_ert_sts_006_inc.Text = "";
+        lb_rt3_sts_006_inc.Text = "";
+        lb_rt5_sts_006_inc.Text = "";
+        lb_dnd_sts_006_inc.Text = "";
+
+        lb_tit_sts_med_inc.Text = "";
+        lb_tit_sts_dsv_inc.Text = "";
+        lb_tnc_sts_med_inc.Text = "";
+        lb_tnc_sts_dsv_inc.Text = "";
+        lb_aon_sts_med_inc.Text = "";
+        lb_aon_sts_dsv_inc.Text = "";
+        lb_enm_sts_med_inc.Text = "";
+        lb_enm_sts_dsv_inc.Text = "";
+        lb_eee_sts_med_inc.Text = "";
+        lb_eee_sts_dsv_inc.Text = "";
+        lb_kkk_sts_med_inc.Text = "";
+        lb_kkk_sts_dsv_inc.Text = "";
+        lb_bbb_sts_med_inc.Text = "";
+        lb_bbb_sts_dsv_inc.Text = "";
+        lb_pue_sts_med_inc.Text = "";
+        lb_pue_sts_dsv_inc.Text = "";
+        lb_ole_sts_med_inc.Text = "";
+        lb_ole_sts_dsv_inc.Text = "";
+        lb_trq_sts_med_inc.Text = "";
+        lb_trq_sts_dsv_inc.Text = "";
+        lb_ert_sts_med_inc.Text = "";
+        lb_ert_sts_dsv_inc.Text = "";
+        lb_rt3_sts_med_inc.Text = "";
+        lb_rt3_sts_dsv_inc.Text = "";
+        lb_rt5_sts_med_inc.Text = "";
+        lb_rt5_sts_dsv_inc.Text = "";
+        lb_dnd_sts_med_inc.Text = "";
+        lb_dnd_sts_dsv_inc.Text = "";
+        
+        txt_obs_inc.Text = "";
+        cbo_sts_inc.SelectedIndex = 1;
+    }
+
+    protected void btNovoFiltro_Click(object sender, EventArgs e)
+    {
+        dvResultado.Visible = false;
+        lbAcao.Text = "Nova";
+        rowId.Value = null;
+        LimpaTela();
+        divCadastro.Visible = true;
+        dvFiltro.Visible = false;
+        txt_dat_inc.Focus();
+    }
+
+    protected void btVoltar_Click(object sender, EventArgs e)
+    {
+        divCadastro.Visible = false;
+        dvResultado.Visible = false;
+        dvFiltro.Visible = true;
+        txt_dat.Focus();
+    }
+
+    protected void btLimpar_Click(object sender, EventArgs e)
+    {
+        LimpaTela();
+    }
+
+    protected void btFiltro_Click(object sender, EventArgs e)
+    {
+        dvFiltro.Visible = true;
+        dvResultado.Visible = false;
+        txt_dat.Focus();
+    }
+
+    protected string CriaFiltro(Analise Analise)
+    {
+        string filtro = "";
+        if (!String.IsNullOrEmpty(txt_dat.Text))
+        {
+            Analise.ANS_DAT = Convert.ToDateTime(txt_dat.Text);
+            filtro = filtro + "Data= " + txt_dat.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise.ANS_LOT = txt_lot.Text;
+            filtro = filtro + "Lote= " + txt_lot.Text + "; ";
+        }
+        if (!chk_lot_tst.Checked)
+        {
+            Analise.ANS_LOT_TST = 0;
+            filtro = filtro + "Teste= NÃO; ";
+        }
+        else
+        {
+            Analise.ANS_LOT_TST = 1;
+            filtro = filtro + "Teste= SIM; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_tit_poy_id.Text))
+        {
+            Analise.ANS_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id.SelectedValue);
+            filtro = filtro + "Título= " + cbo_tit_poy_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_aps_id.Text))
+        {
+            Analise.ANS_APS_ID = Convert.ToInt32(cbo_aps_id.SelectedValue);
+            filtro = filtro + "Apresentação= " + cbo_aps_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_maq_id.Text))
+        {
+            Analise.ANS_MAQ_ID = Convert.ToInt32(cbo_maq_id.SelectedValue);
+            filtro = filtro + "Máquina= " + cbo_maq_id.SelectedItem.Text + "; ";
+        }
+        if (!String.IsNullOrEmpty(cbo_sts.Text))
+        {
+            Analise.ANS_STS = Convert.ToInt32(cbo_sts.SelectedValue);
+            filtro = filtro + "Status= " + cbo_sts.SelectedItem.Text + "; ";
+        }
+        return filtro;
+    }
+
+    protected void btProcurar_Click(object sender, EventArgs e)
+    {
+        string filtro = "";
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        gvAnalise.DataSource = dsAnalise;
+        gvAnalise.DataBind();
+        dsAnalise.Dispose();
+        Dispose();
+
+        if (!String.IsNullOrEmpty(filtro))
+        {
+            lb_fil.Text = filtro;
+        }
+        else
+        {
+            lb_fil.Text = "Não há filtros.";
+        }
+
+        dvFiltro.Visible = false;
+        dvResultado.Visible = true;
+    }
+
+    protected void gvAnalise_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            e.Row.Attributes.Add("onMouseOver", "this.className='selecionado';");
+            if ((e.Row.RowIndex % 2) == 0)
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_par';");
+            }
+            else
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_impar';");
+            }
+            if (!string.IsNullOrEmpty(Origem.Value))
+                e.Row.Attributes.Add("onClick", "JavaScript:retornaSelecao('" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "', '" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "');");
+            else
+                e.Row.Attributes.Add("onClick", "JavaScript:window.top.frameprincipal.location = 'Analise.aspx?rowId=" + gvAnalise.DataKeys[e.Row.RowIndex][0].ToString() + "'");
+        }
+    }
+
+    private SortDirection GridViewSortDirection
+    {
+        get
+        {
+            if (ViewState["sortDirection"] == null)
+                ViewState["sortDirection"] = SortDirection.Ascending;
+            return (SortDirection)ViewState["sortDirection"];
+        }
+        set { ViewState["sortDirection"] = value; }
+    }
+
+    private int GetSortColumnIndex()
+    {
+        foreach (DataControlField field in gvAnalise.Columns)
+        {
+            if (field.SortExpression == (string)ViewState["SortExpression"])
+            {
+                return gvAnalise.Columns.IndexOf(field);
+            }
+        }
+        return -1;
+    }
+
+    private void AddSortImage(int columnIndex, GridViewRow headerRow)
+    {
+        System.Web.UI.WebControls.Image sortImage = new System.Web.UI.WebControls.Image();
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            sortImage.ImageUrl = "img/arrow_down.gif";
+            sortImage.AlternateText = "Ordem Ascendente";
+        }
+        else
+        {
+            sortImage.ImageUrl = "img/arrow_up.gif";
+            sortImage.AlternateText = "Ordem Descendente";
+        }
+        headerRow.Cells[columnIndex].Controls.Add(sortImage);
+    }
+
+    protected void gvAnalise_RowCreated(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            int sortColumnIndex = GetSortColumnIndex();
+            if (sortColumnIndex != -1)
+            {
+                AddSortImage(sortColumnIndex, e.Row);
+            }
+        }
+    }
+
+    protected void gvAnalise_Sorting(Object sender, GridViewSortEventArgs e)
+    {
+        string Ordem = " ASC ";
+        string sortExpression = e.SortExpression;
+        ViewState["SortExpression"] = sortExpression;
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            GridViewSortDirection = SortDirection.Descending;
+            Ordem = " DESC ";
+        }
+        else
+        {
+            GridViewSortDirection = SortDirection.Ascending;
+            Ordem = " ASC ";
+        }
+
+        string filtro = "";
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        DataTable dtAnalise = dsAnalise.Tables[0];
+        DataView dvAnalise = new DataView(dtAnalise);
+        dvAnalise.Sort = e.SortExpression + Ordem;
+        gvAnalise.DataSource = dvAnalise;
+        gvAnalise.DataBind();
+
+        dvAnalise.Dispose();
+        dtAnalise.Dispose();
+        dsAnalise.Dispose();
+        Dispose();
+    }
+
+    protected void btSalvar_Click(object sender, EventArgs e)
+    {
+        string sMsg;
+        if (txt_dat_inc.Text == "")
+        {
+            TratamentoErro("O campo Data é obrigatório.");
+            txt_dat_inc.Focus();
+            return;
+        }
+
+        if (txt_lot_inc.Text == "")
+        {
+            TratamentoErro("O campo Lote é obrigatório.");
+            txt_lot_inc.Focus();
+            return;
+        }
+
+        if (cbo_tit_poy_id_inc.Text == "")
+        {
+            TratamentoErro("O campo Título é obrigatório.");
+            cbo_tit_poy_id_inc.Focus();
+            return;
+        }
+
+        if (cbo_aps_id_inc.Text == "")
+        {
+            TratamentoErro("O campo Apresentação é obrigatório.");
+            cbo_aps_id_inc.Focus();
+            return;
+        }
+
+        if (cbo_maq_id_inc.Text == "")
+        {
+            TratamentoErro("O campo Máquina é obrigatório.");
+            cbo_maq_id_inc.Focus();
+            return;
+        }
+
+        if (cbo_ert_id_inc.Text == "")
+        {
+            TratamentoErro("O campo Entrelaçamento é obrigatório.");
+            cbo_ert_id_inc.Focus();
+            return;
+        }
+
+        if (txt_vrd_inc.Text == "")
+        {
+            TratamentoErro("O campo Virada é obrigatório.");
+            txt_vrd_inc.Focus();
+            return;
+        }
+/*
+        if (txt_pos_inc.Text == "")
+        {
+            TratamentoErro("O campo Posição é obrigatório.");
+            txt_pos_inc.Focus();
+            return;
+        }
+*/
+        if (cbo_sts_inc.Text == "")
+        {
+            TratamentoErro("O campo Status é obrigatório.");
+            cbo_sts_inc.Focus();
+            return;
+        }
+
+        if ((chk_lot_tst_inc.Checked) && (cbo_sts_inc.SelectedValue == "1"))
+        {
+            TratamentoErro("Para Lote Teste o status tem que ser Inativo.");
+            cbo_sts_inc.Focus();
+            return;
+        }
+
+        Analise Analise = new Analise();
+        if (txt_dat_inc.Text != "")
+        {
+            Analise.ANS_DAT = Convert.ToDateTime(txt_dat_inc.Text);
+        }
+        Analise.ANS_LOT = txt_lot_inc.Text;
+        Analise.ANS_LOT_TST = Convert.ToInt32(chk_lot_tst_inc.Checked);
+        if (cbo_tit_poy_id_inc.Text != "")
+        {
+            Analise.ANS_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id_inc.SelectedValue);
+        }
+        if (cbo_aps_id_inc.Text != "")
+        {
+            Analise.ANS_APS_ID = Convert.ToInt32(cbo_aps_id_inc.SelectedValue);
+        }
+        if (cbo_maq_id_inc.Text != "")
+        {
+            Analise.ANS_MAQ_ID = Convert.ToInt32(cbo_maq_id_inc.SelectedValue);
+        }
+        if (cbo_ert_id_inc.Text != "")
+        {
+            Analise.ANS_ERT_ID = Convert.ToInt32(cbo_ert_id_inc.SelectedValue);
+        }
+        if (txt_vrd_inc.Text != "")
+        {
+            Analise.ANS_VRD = txt_vrd_inc.Text;
+        }
+        if (txt_pos_001_inc.Text != "")
+        {
+            Analise.ANS_POS_001 = Convert.ToInt32(txt_pos_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_001_inc.Text))
+        {
+            Analise.ANS_TIT_001 = Convert.ToDouble(txt_tit_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_001_inc.Text))
+        {
+            Analise.ANS_TNC_001 = Convert.ToDouble(txt_tnc_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_001_inc.Text))
+        {
+            Analise.ANS_AON_001 = Convert.ToDouble(txt_aon_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_001_inc.Text))
+        {
+            Analise.ANS_ENM_001 = Convert.ToDouble(txt_enm_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_001_inc.Text))
+        {
+            Analise.ANS_EEE_001 = Convert.ToDouble(txt_eee_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_001_inc.Text))
+        {
+            Analise.ANS_KKK_001 = Convert.ToDouble(txt_kkk_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_001_inc.Text))
+        {
+            Analise.ANS_BBB_001 = Convert.ToDouble(txt_bbb_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_001_inc.Text))
+        {
+            Analise.ANS_PUE_001 = Convert.ToDouble(txt_pue_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_001_inc.Text))
+        {
+            Analise.ANS_OLE_001 = Convert.ToDouble(txt_ole_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_001_inc.Text))
+        {
+            Analise.ANS_TRQ_001 = Convert.ToDouble(txt_trq_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_001_inc.Text))
+        {
+            Analise.ANS_ERT_001 = Convert.ToDouble(txt_ert_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_001_inc.Text))
+        {
+            Analise.ANS_RT3_001 = Convert.ToDouble(txt_rt3_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_001_inc.Text))
+        {
+            Analise.ANS_RT5_001 = Convert.ToDouble(txt_rt5_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_001_inc.Text))
+        {
+            Analise.ANS_PES_001 = Convert.ToDouble(txt_pes_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_001_inc.Text))
+        {
+            Analise.ANS_DMO_001 = Convert.ToDouble(txt_dmo_001_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_001_inc.Text))
+        {
+            Analise.ANS_DND_001 = Convert.ToDouble(txt_dnd_001_inc.Text);
+        }
+        if (txt_pos_002_inc.Text != "")
+        {
+            Analise.ANS_POS_002 = Convert.ToInt32(txt_pos_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_002_inc.Text))
+        {
+            Analise.ANS_TIT_002 = Convert.ToDouble(txt_tit_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_002_inc.Text))
+        {
+            Analise.ANS_TNC_002 = Convert.ToDouble(txt_tnc_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_002_inc.Text))
+        {
+            Analise.ANS_AON_002 = Convert.ToDouble(txt_aon_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_002_inc.Text))
+        {
+            Analise.ANS_ENM_002 = Convert.ToDouble(txt_enm_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_002_inc.Text))
+        {
+            Analise.ANS_EEE_002 = Convert.ToDouble(txt_eee_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_002_inc.Text))
+        {
+            Analise.ANS_KKK_002 = Convert.ToDouble(txt_kkk_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_002_inc.Text))
+        {
+            Analise.ANS_BBB_002 = Convert.ToDouble(txt_bbb_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_002_inc.Text))
+        {
+            Analise.ANS_PUE_002 = Convert.ToDouble(txt_pue_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_002_inc.Text))
+        {
+            Analise.ANS_OLE_002 = Convert.ToDouble(txt_ole_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_002_inc.Text))
+        {
+            Analise.ANS_TRQ_002 = Convert.ToDouble(txt_trq_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_002_inc.Text))
+        {
+            Analise.ANS_ERT_002 = Convert.ToDouble(txt_ert_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_002_inc.Text))
+        {
+            Analise.ANS_RT3_002 = Convert.ToDouble(txt_rt3_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_002_inc.Text))
+        {
+            Analise.ANS_RT5_002 = Convert.ToDouble(txt_rt5_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_002_inc.Text))
+        {
+            Analise.ANS_PES_002 = Convert.ToDouble(txt_pes_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_002_inc.Text))
+        {
+            Analise.ANS_DMO_002 = Convert.ToDouble(txt_dmo_002_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_002_inc.Text))
+        {
+            Analise.ANS_DND_002 = Convert.ToDouble(txt_dnd_002_inc.Text);
+        }
+        if (txt_pos_003_inc.Text != "")
+        {
+            Analise.ANS_POS_003 = Convert.ToInt32(txt_pos_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_003_inc.Text))
+        {
+            Analise.ANS_TIT_003 = Convert.ToDouble(txt_tit_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_003_inc.Text))
+        {
+            Analise.ANS_TNC_003 = Convert.ToDouble(txt_tnc_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_003_inc.Text))
+        {
+            Analise.ANS_AON_003 = Convert.ToDouble(txt_aon_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_003_inc.Text))
+        {
+            Analise.ANS_ENM_003 = Convert.ToDouble(txt_enm_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_003_inc.Text))
+        {
+            Analise.ANS_EEE_003 = Convert.ToDouble(txt_eee_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_003_inc.Text))
+        {
+            Analise.ANS_KKK_003 = Convert.ToDouble(txt_kkk_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_003_inc.Text))
+        {
+            Analise.ANS_BBB_003 = Convert.ToDouble(txt_bbb_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_003_inc.Text))
+        {
+            Analise.ANS_PUE_003 = Convert.ToDouble(txt_pue_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_003_inc.Text))
+        {
+            Analise.ANS_OLE_003 = Convert.ToDouble(txt_ole_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_003_inc.Text))
+        {
+            Analise.ANS_TRQ_003 = Convert.ToDouble(txt_trq_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_003_inc.Text))
+        {
+            Analise.ANS_ERT_003 = Convert.ToDouble(txt_ert_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_003_inc.Text))
+        {
+            Analise.ANS_RT3_003 = Convert.ToDouble(txt_rt3_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_003_inc.Text))
+        {
+            Analise.ANS_RT5_003 = Convert.ToDouble(txt_rt5_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_003_inc.Text))
+        {
+            Analise.ANS_PES_003 = Convert.ToDouble(txt_pes_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_003_inc.Text))
+        {
+            Analise.ANS_DMO_003 = Convert.ToDouble(txt_dmo_003_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_003_inc.Text))
+        {
+            Analise.ANS_DND_003 = Convert.ToDouble(txt_dnd_003_inc.Text);
+        }
+        if (txt_pos_004_inc.Text != "")
+        {
+            Analise.ANS_POS_004 = Convert.ToInt32(txt_pos_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_004_inc.Text))
+        {
+            Analise.ANS_TIT_004 = Convert.ToDouble(txt_tit_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_004_inc.Text))
+        {
+            Analise.ANS_TNC_004 = Convert.ToDouble(txt_tnc_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_004_inc.Text))
+        {
+            Analise.ANS_AON_004 = Convert.ToDouble(txt_aon_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_004_inc.Text))
+        {
+            Analise.ANS_ENM_004 = Convert.ToDouble(txt_enm_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_004_inc.Text))
+        {
+            Analise.ANS_EEE_004 = Convert.ToDouble(txt_eee_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_004_inc.Text))
+        {
+            Analise.ANS_KKK_004 = Convert.ToDouble(txt_kkk_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_004_inc.Text))
+        {
+            Analise.ANS_BBB_004 = Convert.ToDouble(txt_bbb_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_004_inc.Text))
+        {
+            Analise.ANS_PUE_004 = Convert.ToDouble(txt_pue_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_004_inc.Text))
+        {
+            Analise.ANS_OLE_004 = Convert.ToDouble(txt_ole_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_004_inc.Text))
+        {
+            Analise.ANS_TRQ_004 = Convert.ToDouble(txt_trq_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_004_inc.Text))
+        {
+            Analise.ANS_ERT_004 = Convert.ToDouble(txt_ert_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_004_inc.Text))
+        {
+            Analise.ANS_RT3_004 = Convert.ToDouble(txt_rt3_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_004_inc.Text))
+        {
+            Analise.ANS_RT5_004 = Convert.ToDouble(txt_rt5_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_004_inc.Text))
+        {
+            Analise.ANS_PES_004 = Convert.ToDouble(txt_pes_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_004_inc.Text))
+        {
+            Analise.ANS_DMO_004 = Convert.ToDouble(txt_dmo_004_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_004_inc.Text))
+        {
+            Analise.ANS_DND_004 = Convert.ToDouble(txt_dnd_004_inc.Text);
+        }
+        if (txt_pos_005_inc.Text != "")
+        {
+            Analise.ANS_POS_005 = Convert.ToInt32(txt_pos_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_005_inc.Text))
+        {
+            Analise.ANS_TIT_005 = Convert.ToDouble(txt_tit_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_005_inc.Text))
+        {
+            Analise.ANS_TNC_005 = Convert.ToDouble(txt_tnc_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_005_inc.Text))
+        {
+            Analise.ANS_AON_005 = Convert.ToDouble(txt_aon_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_005_inc.Text))
+        {
+            Analise.ANS_ENM_005 = Convert.ToDouble(txt_enm_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_005_inc.Text))
+        {
+            Analise.ANS_EEE_005 = Convert.ToDouble(txt_eee_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_005_inc.Text))
+        {
+            Analise.ANS_KKK_005 = Convert.ToDouble(txt_kkk_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_005_inc.Text))
+        {
+            Analise.ANS_BBB_005 = Convert.ToDouble(txt_bbb_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_005_inc.Text))
+        {
+            Analise.ANS_PUE_005 = Convert.ToDouble(txt_pue_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_005_inc.Text))
+        {
+            Analise.ANS_OLE_005 = Convert.ToDouble(txt_ole_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_005_inc.Text))
+        {
+            Analise.ANS_TRQ_005 = Convert.ToDouble(txt_trq_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_005_inc.Text))
+        {
+            Analise.ANS_ERT_005 = Convert.ToDouble(txt_ert_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_005_inc.Text))
+        {
+            Analise.ANS_RT3_005 = Convert.ToDouble(txt_rt3_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_005_inc.Text))
+        {
+            Analise.ANS_RT5_005 = Convert.ToDouble(txt_rt5_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_005_inc.Text))
+        {
+            Analise.ANS_PES_005 = Convert.ToDouble(txt_pes_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_005_inc.Text))
+        {
+            Analise.ANS_DMO_005 = Convert.ToDouble(txt_dmo_005_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_005_inc.Text))
+        {
+            Analise.ANS_DND_005 = Convert.ToDouble(txt_dnd_005_inc.Text);
+        }
+        if (txt_pos_006_inc.Text != "")
+        {
+            Analise.ANS_POS_006 = Convert.ToInt32(txt_pos_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tit_006_inc.Text))
+        {
+            Analise.ANS_TIT_006 = Convert.ToDouble(txt_tit_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_tnc_006_inc.Text))
+        {
+            Analise.ANS_TNC_006 = Convert.ToDouble(txt_tnc_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_aon_006_inc.Text))
+        {
+            Analise.ANS_AON_006 = Convert.ToDouble(txt_aon_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_enm_006_inc.Text))
+        {
+            Analise.ANS_ENM_006 = Convert.ToDouble(txt_enm_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_eee_006_inc.Text))
+        {
+            Analise.ANS_EEE_006 = Convert.ToDouble(txt_eee_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_kkk_006_inc.Text))
+        {
+            Analise.ANS_KKK_006 = Convert.ToDouble(txt_kkk_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_bbb_006_inc.Text))
+        {
+            Analise.ANS_BBB_006 = Convert.ToDouble(txt_bbb_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pue_006_inc.Text))
+        {
+            Analise.ANS_PUE_006 = Convert.ToDouble(txt_pue_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ole_006_inc.Text))
+        {
+            Analise.ANS_OLE_006 = Convert.ToDouble(txt_ole_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_trq_006_inc.Text))
+        {
+            Analise.ANS_TRQ_006 = Convert.ToDouble(txt_trq_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_ert_006_inc.Text))
+        {
+            Analise.ANS_ERT_006 = Convert.ToDouble(txt_ert_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt3_006_inc.Text))
+        {
+            Analise.ANS_RT3_006 = Convert.ToDouble(txt_rt3_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_rt5_006_inc.Text))
+        {
+            Analise.ANS_RT5_006 = Convert.ToDouble(txt_rt5_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_pes_006_inc.Text))
+        {
+            Analise.ANS_PES_006 = Convert.ToDouble(txt_pes_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dmo_006_inc.Text))
+        {
+            Analise.ANS_DMO_006 = Convert.ToDouble(txt_dmo_006_inc.Text);
+        }
+        if (!string.IsNullOrEmpty(txt_dnd_006_inc.Text))
+        {
+            Analise.ANS_DND_006 = Convert.ToDouble(txt_dnd_006_inc.Text);
+        }
+        Analise.ANS_OBS = txt_obs_inc.Text;
+        if (cbo_sts_inc.Text != "")
+        {
+            Analise.ANS_STS = Convert.ToInt32(cbo_sts_inc.SelectedValue);
+        }
+        ConfereLimites();
+
+        if ((bFora) && (cbo_sts_inc.SelectedValue == "1"))
+        {
+            TratamentoErro("Para Análise com parâmetros \"Fora\" o status tem que ser Inativo.");
+            cbo_sts_inc.Focus();
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(rowId.Value))
+        {
+            Analise.ANS_ID = Convert.ToInt32(rowId.Value);
+            Analise.ANS_USR_ALT_ID = Convert.ToInt32(Session["USR_ID"].ToString());
+            sMsg = Analise.Alterar();
+            if (sMsg != "")
+            {
+                Response.Redirect("Erro.aspx?Erro=" + sMsg.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "));
+            }
+            else
+            {
+                sMsg = Analise.AtualizaMediaDesvio();
+                if (sMsg != "")
+                {
+                    Response.Redirect("Erro.aspx?Erro=" + sMsg.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "));
+                }
+                else
+                {
+                    TratamentoErro("Analise alterado com sucesso.");
+                }
+            }
+        }
+        else
+        {
+            /* Não verificar duplicidades
+            Analise ANS = new Analise();
+            //Verificar se já não existe um cadastro consultando o: ANS_DES 
+            ANS.ANS_DES = txt_des_inc.Text;
+            DataSet dsANS = ANS.Consultar();
+            if (dsANS.Tables[0].Rows.Count > 0)
+            {
+                TratamentoErro("Esse Analise já está cadastrado.");
+                txt_dat_inc.Focus();
+
+                return;
+            }
+            */
+            Analise.ANS_USR_INC_ID = Convert.ToInt32(Session["USR_ID"].ToString());
+            sMsg = Analise.Inserir();
+
+            if (sMsg.Substring(0, 1) == "E")
+            {
+                Response.Redirect("Erro.aspx?Erro=" + sMsg.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "));
+            }
+            else
+            {
+                rowId.Value = sMsg;
+                Analise.ANS_ID = Convert.ToInt32(rowId.Value);
+                sMsg = Analise.AtualizaMediaDesvio();
+
+                if (sMsg != "")
+                {
+                    Response.Redirect("Erro.aspx?Erro=" + sMsg.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "));
+                }
+                else
+                {
+                    TratamentoErro("Analise inserido com sucesso.");
+                }
+
+                if (!string.IsNullOrEmpty(Origem.Value) && Origem.Value == "Nova")
+                    ScriptManager.RegisterClientScriptBlock(this, GetType(), "alertaOrigem", "window.close();", true);
+            }
+            //dsANS.Dispose();
+        }
+        Dispose();
+
+        if (bFora)
+        {
+            EnviaEmail();
+        }
+
+        /*
+        //Mantem no visão de cadastro para verificação dos limites
+        divCadastro.Visible = false;
+        dvFiltro.Visible = true;
+
+        rowId.Value = null;
+         */
+    }
+
+    private void TratamentoErro(string erro)
+    {
+        if (!string.IsNullOrEmpty(erro))
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "AlertErro", "alert('" + erro + "');", true);
+    }
+
+    protected void lkb_pdf_Click(object sender, EventArgs e)
+    {
+        if (gvAnalise.Rows.Count > 0)
+        {
+            Response.Clear();
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "attachment;filename=Historico.pdf");
+            // Sem a opção de Salvar
+            // Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            StringWriter stringWrite = new StringWriter();
+            HtmlTextWriter htmlWrite = new HtmlTextWriter(stringWrite);
+            gvAnalise.AllowSorting = false;
+            gvAnalise.AllowPaging = false;
+            //gvAnalise.DataBind();
+
+            // Deixar cabeçalho em branco/preto, sem links e imagens
+            for (int i = 0; i < gvAnalise.HeaderRow.Cells.Count; i++)
+            {
+                LinkButton lnk = (LinkButton)gvAnalise.HeaderRow.Cells[i].Controls[0];
+                lnk.Enabled = false;
+                lnk.BackColor = System.Drawing.Color.White;
+                lnk.ForeColor = System.Drawing.Color.Black;
+            }
+
+            gvAnalise.RenderControl(htmlWrite);
+
+            StringReader stringReader = new StringReader(stringWrite.ToString());
+            Document pdfDocument = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+            HTMLWorker htmlParser = new HTMLWorker(pdfDocument);
+            PdfWriter.GetInstance(pdfDocument, Response.OutputStream);
+            pdfDocument.Open();
+            htmlParser.Parse(stringReader);
+            pdfDocument.Close();
+            Response.Write(pdfDocument);
+            Response.End();
+        }
+        else
+        {
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "alerta", "alert('Não há registros para exportação !');", true);
+        }
+    }
+
+    protected void lkb_xls_Click(object sender, EventArgs e)
+    {
+        if (gvAnalise.Rows.Count > 0)
+        {
+            Response.Clear();
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment;filename=Historico.xls");
+            //Sem a opção de Salvar
+            //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+            StringWriter stringWrite = new StringWriter();
+            HtmlTextWriter htmlWrite = new HtmlTextWriter(stringWrite);
+            gvAnalise.AllowSorting = false;
+            gvAnalise.AllowPaging = false;
+
+            // Deixar cabeçalho em branco/preto, sem links e imagens
+
+            for (int i = 0; i < gvAnalise.HeaderRow.Cells.Count; i++)
+            {
+                LinkButton lnk = (LinkButton)gvAnalise.HeaderRow.Cells[i].Controls[0];
+                lnk.Enabled = false;
+                lnk.BackColor = System.Drawing.Color.White;
+                lnk.ForeColor = System.Drawing.Color.Black;
+            }
+
+            gvAnalise.RenderControl(htmlWrite);
+
+            Response.Write(stringWrite.ToString());
+            Response.End();
+        }
+        else
+        {
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "alerta", "alert('Não há registros para exportação !');", true);
+        }
+    }
+
+    public override void VerifyRenderingInServerForm(Control control)
+    {
+
+    }
+
+    protected void txt_lot_inc_OnTextChanged(object sender, EventArgs e)
+    {
+        CarregaLote();
+        cbo_tit_poy_id_inc.Focus();
+    }
+
+    protected void CarregaLote()
+    {
+        if (!string.IsNullOrEmpty(txt_lot_inc.Text))
+        {
+            Especificacao Especificacao = new Especificacao();
+            Especificacao.ANE_LOT = txt_lot_inc.Text;
+            DataSet dsEspecificacao = Especificacao.Consultar();
+
+            if (dsEspecificacao.Tables[0].Rows.Count > 0)
+            {
+                cbo_tit_poy_id_inc.SelectedValue = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_POY_ID"].ToString();
+                cbo_aps_id_inc.SelectedValue = dsEspecificacao.Tables[0].Rows[0]["ANE_APS_ID"].ToString();
+                
+                Maquina Maquina = new Maquina();
+                Maquina.MAQ_MAQ_TIP_ID = Convert.ToInt32(dsEspecificacao.Tables[0].Rows[0]["ANE_MAQ_TIP_ID"].ToString());
+                DataSet dsMaquina = Maquina.Consultar();
+                FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id_inc);
+                dsMaquina.Dispose();
+
+                cbo_ert_id_inc.SelectedValue = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_ID"].ToString();
+
+                lb_tit_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MED"].ToString();
+                lb_tit_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MIN"].ToString();
+                lb_tit_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MAX"].ToString();
+                lb_tnc_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MED"].ToString();
+                lb_tnc_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MIN"].ToString();
+                lb_tnc_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MAX"].ToString();
+                lb_aon_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MED"].ToString();
+                lb_aon_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MIN"].ToString();
+                lb_aon_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MAX"].ToString();
+                lb_ole_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MED"].ToString();
+                lb_ole_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MIN"].ToString();
+                lb_ole_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_OLE_MAX"].ToString();
+                lb_enm_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MED"].ToString();
+                lb_enm_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MIN"].ToString();
+                lb_enm_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MAX"].ToString();
+                lb_eee_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MED"].ToString();
+                lb_eee_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MIN"].ToString();
+                lb_eee_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MAX"].ToString();
+                lb_kkk_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MED"].ToString();
+                lb_kkk_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MIN"].ToString();
+                lb_kkk_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MAX"].ToString();
+                lb_bbb_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MED"].ToString();
+                lb_bbb_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MIN"].ToString();
+                lb_bbb_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MAX"].ToString();
+                lb_pue_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MED"].ToString();
+                lb_pue_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MIN"].ToString();
+                lb_pue_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PUE_MAX"].ToString();
+                lb_trq_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MED"].ToString();
+                lb_trq_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MIN"].ToString();
+                lb_trq_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MAX"].ToString();
+                lb_ert_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MED"].ToString();
+                lb_ert_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MIN"].ToString();
+                lb_ert_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MAX"].ToString();
+                lb_rt3_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MED"].ToString();
+                lb_rt3_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MIN"].ToString();
+                lb_rt3_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MAX"].ToString();
+                lb_rt5_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MED"].ToString();
+                lb_rt5_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MIN"].ToString();
+                lb_rt5_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MAX"].ToString();
+                lb_pes_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MED"].ToString();
+                lb_pes_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MIN"].ToString();
+                lb_pes_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MAX"].ToString();
+                lb_dmo_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MED"].ToString();
+                lb_dmo_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MIN"].ToString();
+                lb_dmo_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MAX"].ToString();             
+                lb_dnd_med_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MED"].ToString();
+                lb_dnd_min_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MIN"].ToString();
+                lb_dnd_max_esp_inc.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MAX"].ToString();
+
+            }
+            dsEspecificacao.Dispose();
+            Dispose();
+
+            if (txt_lot_inc.Text.Substring(0, 1) == "Z")
+            {
+                lbl_rt3_rt5.Text = "* Retenção a 6% e 12%";
+            }
+            else
+            {
+                lbl_rt3_rt5.Text = "* Retenção a 3% e 6%";
+            }
+ 
+        }
+    }
+
+    protected void cbo_aps_id_inc_OnSelectedIndexChanged(object sender, EventArgs e)
+    {
+        CarregaApresentacao();
+    }
+    
+    protected void CarregaApresentacao()
+    {
+        if (!string.IsNullOrEmpty(cbo_aps_id_inc.Text))
+        {
+            Apresentacao Apresentacao = new Apresentacao();
+            Apresentacao.APS_ID = Convert.ToInt32(cbo_aps_id_inc.Text);
+            DataSet dsApresentacao = Apresentacao.Consultar();
+
+            if (dsApresentacao.Tables[0].Rows.Count > 0)
+            {
+                txt_aps_pes_inc.Text = dsApresentacao.Tables[0].Rows[0]["APS_PES"].ToString();
+                txt_aps_dmo_inc.Text = dsApresentacao.Tables[0].Rows[0]["APS_DMO"].ToString();
+            }
+        }
+    }
+
+    protected void ConfereLimites()
+    {
+        bFora = false;
+
+        ConfereItem("tit", "Título");
+        ConfereItem("tnc", "Tenacidade");
+        ConfereItem("aon", "Alongamento");
+        ConfereItem("ole", "Óleo");
+        ConfereItem("enm", "Encolhimento");
+        ConfereItem("eee", "E");
+        ConfereItem("kkk", "K");
+        ConfereItem("bbb", "B");
+        ConfereItem("pue", "PUE");
+        ConfereItem("trq", "Torque");
+        ConfereItem("ert", "Entrelaçamento");
+        ConfereItem("rt3", "Retenção 1");
+        ConfereItem("rt5", "Retenção 2");
+        ConfereItem("dnd", "Densidade");
+    }
+
+    private void ConfereItem(string sItem, string sTitulo)
+    {
+        Label lb_item_min = (Label)FindControl("lb_" + sItem + "_min_esp_inc");
+        Label lb_item_max = (Label)FindControl("lb_" + sItem + "_max_esp_inc");
+
+        if (!string.IsNullOrEmpty(lb_item_min.Text) && !string.IsNullOrEmpty(lb_item_max.Text))
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                TextBox tb_item = (TextBox)FindControl("txt_" + sItem + "_00" + (i + 1) + "_inc");
+
+                //Response.Write(tb_item.ID + ";" + tb_item.Text + ";" + lb_item_min.Text + ";" + lb_item_max.Text + ";<br/>");
+                Label lb_status = (Label)FindControl("lb_" + sItem + "_sts_00" + (i + 1) + "_inc");
+                if (!string.IsNullOrEmpty(tb_item.Text))
+                {
+                    if ((Convert.ToDouble(tb_item.Text) < Convert.ToDouble(lb_item_min.Text)) || (Convert.ToDouble(tb_item.Text) > Convert.ToDouble(lb_item_max.Text)))
+                    {
+                        bFora = true;
+                        lb_status.Text = "Fora";
+
+                        TextBox tb_pos = (TextBox)FindControl("txt_pos_00" + (i + 1) + "_inc");
+                        sFora += "Posição : " + tb_pos.Text + " / " + sTitulo + " = " + tb_item.Text + " * Minimo : " + lb_item_min.Text + " Máximo : " + lb_item_max.Text +"\n<br>";
+                    }
+                }
+                else
+                {
+                    lb_status.Text = "";
+                }
+            }
+
+            Label lb_med = (Label)FindControl("lb_" + sItem + "_med_inc");
+            Label lb_sts_med = (Label)FindControl("lb_" + sItem + "_sts_med_inc");
+
+            //Response.Write("lb_" + sItem + "_med_inc;" + lb_med.Text + ";" + "lb_" + sItem + "_sts_med_inc;" + lb_sts_med.Text + ";" + lb_item_min.Text + ";" + lb_item_max.Text + ";<br/>");
+            if (!string.IsNullOrEmpty(lb_med.Text))
+            {
+                if ((Convert.ToDouble(lb_med.Text) < Convert.ToDouble(lb_item_min.Text)) || (Convert.ToDouble(lb_med.Text) > Convert.ToDouble(lb_item_max.Text)))
+                {
+                    lb_sts_med.Text = "Fora";
+                }
+            }
+            else
+            {
+                lb_sts_med.Text = "";
+            }
+        }
+    }
+    
+    protected void btCalculaEncolhimento_Click(object sender, EventArgs e)
+    {
+        if (txt_pe1_001_inc.Text != "")
+        {
+            if (txt_pe1_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_001_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_001_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_001_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_001_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_001_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_001_inc.Focus();
+                return;
+            }
+
+            double dMediaPre001 = (Convert.ToDouble(txt_pe1_001_inc.Text) + Convert.ToDouble(txt_pe2_001_inc.Text) + Convert.ToDouble(txt_pe3_001_inc.Text)) / 3;
+            double dMediaPos001 = (Convert.ToDouble(txt_po1_001_inc.Text) + Convert.ToDouble(txt_po2_001_inc.Text) + Convert.ToDouble(txt_po3_001_inc.Text)) / 3;
+            txt_enm_001_inc.Text = ((dMediaPre001 - dMediaPos001) / dMediaPre001 * 100).ToString("0.00");
+        }
+
+        if (txt_pe1_002_inc.Text != "")
+        {
+            if (txt_pe1_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_002_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_002_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_002_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_002_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_002_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_002_inc.Focus();
+                return;
+            }
+
+            double dMediaPre002 = (Convert.ToDouble(txt_pe1_002_inc.Text) + Convert.ToDouble(txt_pe2_002_inc.Text) + Convert.ToDouble(txt_pe3_002_inc.Text)) / 3;
+            double dMediaPos002 = (Convert.ToDouble(txt_po1_002_inc.Text) + Convert.ToDouble(txt_po2_002_inc.Text) + Convert.ToDouble(txt_po3_002_inc.Text)) / 3;
+            txt_enm_002_inc.Text = ((dMediaPre002 - dMediaPos002) / dMediaPre002 * 100).ToString("0.00");
+        }
+
+        if (txt_pe1_003_inc.Text != "")
+        {
+            if (txt_pe1_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_003_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_003_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_003_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_003_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_003_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_003_inc.Focus();
+                return;
+            }
+
+            double dMediaPre003 = (Convert.ToDouble(txt_pe1_003_inc.Text) + Convert.ToDouble(txt_pe2_003_inc.Text) + Convert.ToDouble(txt_pe3_003_inc.Text)) / 3;
+            double dMediaPos003 = (Convert.ToDouble(txt_po1_003_inc.Text) + Convert.ToDouble(txt_po2_003_inc.Text) + Convert.ToDouble(txt_po3_003_inc.Text)) / 3;
+            txt_enm_003_inc.Text = ((dMediaPre003 - dMediaPos003) / dMediaPre003 * 100).ToString("0.00");
+        }
+
+        if (txt_pe1_004_inc.Text != "")
+        {
+            if (txt_pe1_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_004_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_004_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_004_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_004_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_004_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_004_inc.Focus();
+                return;
+            }
+
+            double dMediaPre004 = (Convert.ToDouble(txt_pe1_004_inc.Text) + Convert.ToDouble(txt_pe2_004_inc.Text) + Convert.ToDouble(txt_pe3_004_inc.Text)) / 3;
+            double dMediaPos004 = (Convert.ToDouble(txt_po1_004_inc.Text) + Convert.ToDouble(txt_po2_004_inc.Text) + Convert.ToDouble(txt_po3_004_inc.Text)) / 3;
+            txt_enm_004_inc.Text = ((dMediaPre004 - dMediaPos004) / dMediaPre004 * 100).ToString("0.00");
+        }
+
+        if (txt_pe1_005_inc.Text != "")
+        {
+            if (txt_pe1_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_005_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_005_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_005_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_005_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_005_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_005_inc.Focus();
+                return;
+            }
+
+            double dMediaPre005 = (Convert.ToDouble(txt_pe1_005_inc.Text) + Convert.ToDouble(txt_pe2_005_inc.Text) + Convert.ToDouble(txt_pe3_005_inc.Text)) / 3;
+            double dMediaPos005 = (Convert.ToDouble(txt_po1_005_inc.Text) + Convert.ToDouble(txt_po2_005_inc.Text) + Convert.ToDouble(txt_po3_005_inc.Text)) / 3;
+            txt_enm_005_inc.Text = ((dMediaPre005 - dMediaPos005) / dMediaPre005 * 100).ToString("0.00");
+        }
+
+        if (txt_pe1_006_inc.Text != "")
+        {
+            if (txt_pe1_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 1 é obrigatório.");
+                txt_pe1_006_inc.Focus();
+                return;
+            }
+
+            if (txt_pe2_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 2 é obrigatório.");
+                txt_pe2_006_inc.Focus();
+                return;
+            }
+
+            if (txt_pe3_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pré-medida 3 é obrigatório.");
+                txt_pe3_006_inc.Focus();
+                return;
+            }
+
+            if (txt_po1_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 1 é obrigatório.");
+                txt_po1_006_inc.Focus();
+                return;
+            }
+
+            if (txt_po2_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 2 é obrigatório.");
+                txt_po2_006_inc.Focus();
+                return;
+            }
+
+            if (txt_po3_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Pós-medida 3 é obrigatório.");
+                txt_po3_006_inc.Focus();
+                return;
+            }
+
+            double dMediaPre006 = (Convert.ToDouble(txt_pe1_006_inc.Text) + Convert.ToDouble(txt_pe2_006_inc.Text) + Convert.ToDouble(txt_pe3_006_inc.Text)) / 3;
+            double dMediaPos006 = (Convert.ToDouble(txt_po1_006_inc.Text) + Convert.ToDouble(txt_po2_006_inc.Text) + Convert.ToDouble(txt_po3_006_inc.Text)) / 3;
+            txt_enm_006_inc.Text = ((dMediaPre006 - dMediaPos006) / dMediaPre006 * 100).ToString("0.00");
+        }
+    }
+
+
+    protected void btCalculaTorque_Click(object sender, EventArgs e)
+    {
+        if (txt_to1_001_inc.Text != "")
+        {
+            if (txt_to1_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_001_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_001_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_001_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_001_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_001_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_001_inc.Focus();
+                return;
+            }
+
+            double dMediaTor001 = (Convert.ToDouble(txt_to1_001_inc.Text) + Convert.ToDouble(txt_to2_001_inc.Text) + Convert.ToDouble(txt_to3_001_inc.Text)) / 3;
+            double dMediaTem001 = (Convert.ToDouble(txt_te1_001_inc.Text) + Convert.ToDouble(txt_te2_001_inc.Text) + Convert.ToDouble(txt_te3_001_inc.Text)) / 3;
+            if (dMediaTem001 != 0)
+            {
+                txt_trq_001_inc.Text = (dMediaTor001 / dMediaTem001).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_001_inc.Text = "0,00";
+            }
+
+        }
+
+        if (txt_to1_002_inc.Text != "")
+        {
+            if (txt_to1_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_002_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_002_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_002_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_002_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_002_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_002_inc.Focus();
+                return;
+            }
+
+            double dMediaTor002 = (Convert.ToDouble(txt_to1_002_inc.Text) + Convert.ToDouble(txt_to2_002_inc.Text) + Convert.ToDouble(txt_to3_002_inc.Text)) / 3;
+            double dMediaTem002 = (Convert.ToDouble(txt_te1_002_inc.Text) + Convert.ToDouble(txt_te2_002_inc.Text) + Convert.ToDouble(txt_te3_002_inc.Text)) / 3;
+            if (dMediaTem002 != 0)
+            {
+                txt_trq_002_inc.Text = (dMediaTor002 / dMediaTem002).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_002_inc.Text = "0,00";
+            }
+        }
+
+        if (txt_to1_003_inc.Text != "")
+        {
+            if (txt_to1_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_003_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_003_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_003_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_003_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_003_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_003_inc.Focus();
+                return;
+            }
+
+            double dMediaTor003 = (Convert.ToDouble(txt_to1_003_inc.Text) + Convert.ToDouble(txt_to2_003_inc.Text) + Convert.ToDouble(txt_to3_003_inc.Text)) / 3;
+            double dMediaTem003 = (Convert.ToDouble(txt_te1_003_inc.Text) + Convert.ToDouble(txt_te2_003_inc.Text) + Convert.ToDouble(txt_te3_003_inc.Text)) / 3;
+            if (dMediaTem003 != 0)
+            {
+                txt_trq_003_inc.Text = (dMediaTor003 / dMediaTem003).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_003_inc.Text = "0,00";
+            }
+        }
+
+        if (txt_to1_004_inc.Text != "")
+        {
+            if (txt_to1_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_004_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_004_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_004_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_004_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_004_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_004_inc.Focus();
+                return;
+            }
+
+            double dMediaTor004 = (Convert.ToDouble(txt_to1_004_inc.Text) + Convert.ToDouble(txt_to2_004_inc.Text) + Convert.ToDouble(txt_to3_004_inc.Text)) / 3;
+            double dMediaTem004 = (Convert.ToDouble(txt_te1_004_inc.Text) + Convert.ToDouble(txt_te2_004_inc.Text) + Convert.ToDouble(txt_te3_004_inc.Text)) / 3;
+            if (dMediaTem004 != 0)
+            {
+                txt_trq_004_inc.Text = (dMediaTor004 / dMediaTem004).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_004_inc.Text = "0,00";
+            }
+        }
+
+        if (txt_to1_005_inc.Text != "")
+        {
+            if (txt_to1_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_005_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_005_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_005_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_005_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_005_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_005_inc.Focus();
+                return;
+            }
+
+            double dMediaTor005 = (Convert.ToDouble(txt_to1_005_inc.Text) + Convert.ToDouble(txt_to2_005_inc.Text) + Convert.ToDouble(txt_to3_005_inc.Text)) / 3;
+            double dMediaTem005 = (Convert.ToDouble(txt_te1_005_inc.Text) + Convert.ToDouble(txt_te2_005_inc.Text) + Convert.ToDouble(txt_te3_005_inc.Text)) / 3;
+            if (dMediaTem005 != 0)
+            {
+                txt_trq_005_inc.Text = (dMediaTor005 / dMediaTem005).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_005_inc.Text = "0,00";
+            }
+        }
+
+        if (txt_to1_006_inc.Text != "")
+        {
+            if (txt_to1_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 1 é obrigatório.");
+                txt_to1_006_inc.Focus();
+                return;
+            }
+
+            if (txt_to2_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 2 é obrigatório.");
+                txt_to2_006_inc.Focus();
+                return;
+            }
+
+            if (txt_to3_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Torque 3 é obrigatório.");
+                txt_to3_006_inc.Focus();
+                return;
+            }
+
+            if (txt_te1_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 1 é obrigatório.");
+                txt_te1_006_inc.Focus();
+                return;
+            }
+
+            if (txt_te2_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 2 é obrigatório.");
+                txt_te2_006_inc.Focus();
+                return;
+            }
+
+            if (txt_te3_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Tempo 3 é obrigatório.");
+                txt_te3_006_inc.Focus();
+                return;
+            }
+            double dMediaTor006 = (Convert.ToDouble(txt_to1_006_inc.Text) + Convert.ToDouble(txt_to2_006_inc.Text) + Convert.ToDouble(txt_to3_006_inc.Text)) / 3;
+            double dMediaTem006 = (Convert.ToDouble(txt_te1_006_inc.Text) + Convert.ToDouble(txt_te2_006_inc.Text) + Convert.ToDouble(txt_te3_006_inc.Text)) / 3;
+            if (dMediaTem006 != 0)
+            {
+                txt_trq_006_inc.Text = (dMediaTor006 / dMediaTem006).ToString("0.00");
+            }
+            else
+            {
+                txt_trq_006_inc.Text = "0,00";
+            }
+        }
+    }
+
+    protected void btCalculaDensidade_Click(object sender, EventArgs e)
+    {
+        if (txt_aps_pes_inc.Text == "")
+        {
+            TratamentoErro("O campo Peso do Tubete é obrigatório.");
+            txt_aps_pes_inc.Focus();
+            return;
+        }
+
+        if (txt_aps_dmo_inc.Text == "")
+        {
+            TratamentoErro("O campo Diâmetro do Tubete é obrigatório.");
+            txt_aps_dmo_inc.Focus();
+            return;
+        }
+
+        if (txt_cma_001_inc.Text != "")
+        {
+            if (txt_cma_001_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_001_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_001_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_001_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_001_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_001_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_001_inc.Focus();
+                return;
+            }
+
+            double dDensidade001 = (0.9549297 * (Convert.ToDouble(txt_pes_001_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_001_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_001_inc.Text) * ((Convert.ToDouble(txt_dmo_001_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_001_inc.Text) * ((Convert.ToDouble(txt_dmo_001_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_001_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_001_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_001_inc.Text = dDensidade001.ToString("0.0000");
+        }
+
+        if (txt_cma_002_inc.Text != "")
+        {
+            if (txt_cma_002_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_002_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_002_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_002_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_002_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_002_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_002_inc.Focus();
+                return;
+            }
+
+            double dDensidade002 = (0.9549297 * (Convert.ToDouble(txt_pes_002_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_002_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_002_inc.Text) * ((Convert.ToDouble(txt_dmo_002_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_002_inc.Text) * ((Convert.ToDouble(txt_dmo_002_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_002_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_002_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_002_inc.Text = dDensidade002.ToString("0.0000");
+        }
+
+        if (txt_cma_003_inc.Text != "")
+        {
+            if (txt_cma_003_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_003_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_003_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_003_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_003_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_003_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_003_inc.Focus();
+                return;
+            }
+
+            double dDensidade003 = (0.9549297 * (Convert.ToDouble(txt_pes_003_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_003_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_003_inc.Text) * ((Convert.ToDouble(txt_dmo_003_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_003_inc.Text) * ((Convert.ToDouble(txt_dmo_003_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_003_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_003_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_003_inc.Text = dDensidade003.ToString("0.0000");
+        }
+
+        if (txt_cma_004_inc.Text != "")
+        {
+            if (txt_cma_004_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_004_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_004_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_004_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_004_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_004_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_004_inc.Focus();
+                return;
+            }
+
+            double dDensidade004 = (0.9549297 * (Convert.ToDouble(txt_pes_004_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_004_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_004_inc.Text) * ((Convert.ToDouble(txt_dmo_004_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_004_inc.Text) * ((Convert.ToDouble(txt_dmo_004_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_004_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_004_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_004_inc.Text = dDensidade004.ToString("0.0000");
+        }
+
+        if (txt_cma_005_inc.Text != "")
+        {
+            if (txt_cma_005_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_005_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_005_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_005_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_005_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_005_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_005_inc.Focus();
+                return;
+            }
+
+            double dDensidade005 = (0.9549297 * (Convert.ToDouble(txt_pes_005_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_005_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_005_inc.Text) * ((Convert.ToDouble(txt_dmo_005_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_005_inc.Text) * ((Convert.ToDouble(txt_dmo_005_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_005_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_005_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_005_inc.Text = dDensidade005.ToString("0.0000");
+        }
+
+        if (txt_cma_006_inc.Text != "")
+        {
+            if (txt_cma_006_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Maior é obrigatório.");
+                txt_cma_006_inc.Focus();
+                return;
+            }
+
+            if (txt_cme_006_inc.Text == "")
+            {
+                TratamentoErro("O campo C.Menor é obrigatório.");
+                txt_cme_006_inc.Focus();
+                return;
+            }
+
+            if (txt_pes_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Peso é obrigatório.");
+                txt_pes_006_inc.Focus();
+                return;
+            }
+
+            if (txt_dmo_006_inc.Text == "")
+            {
+                TratamentoErro("O campo Diâmetro é obrigatório.");
+                txt_dmo_006_inc.Focus();
+                return;
+            }
+
+            double dDensidade006 = (0.9549297 * (Convert.ToDouble(txt_pes_006_inc.Text) - Convert.ToDouble(txt_aps_pes_inc.Text))) / (((Convert.ToDouble(txt_dmo_006_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2) * ((Convert.ToDouble(txt_cma_006_inc.Text) * ((Convert.ToDouble(txt_dmo_006_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (2 * Convert.ToDouble(txt_cme_006_inc.Text) * ((Convert.ToDouble(txt_dmo_006_inc.Text) - Convert.ToDouble(txt_aps_dmo_inc.Text)) / 2)) + (1.5 * Convert.ToDouble(txt_cma_006_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text)) + (1.5 * Convert.ToDouble(txt_cme_006_inc.Text) * Convert.ToDouble(txt_aps_dmo_inc.Text))));
+            txt_dnd_006_inc.Text = dDensidade006.ToString("0.0000");
+        }        
+    }
+
+    protected void EnviaEmail()
+    {
+        string sRemetente = ConfigurationManager.AppSettings["EnderecoSMTP"];
+        string sListaDestinatario = "";
+
+        Usuario Usuario = new Usuario();
+        //Usuario.IN_USR_PFL_ID = "52, 54";
+        Usuario.IN_USR_PFL_ID = "71";
+
+        DataSet dsUsuario = Usuario.Consultar();
+        foreach (DataRow drUsuario in dsUsuario.Tables[0].Rows)
+        {
+            sListaDestinatario += ";" + drUsuario["USR_EML"].ToString();
+        }
+        dsUsuario.Dispose();
+
+        string sListaCopia = ConfigurationManager.AppSettings["EnderecoSMTP"];
+        string sListaCopiaOculta = "";
+        bool bFormatoHTML = true;
+        string sTitulo = "Notificação da Análise Fora e Inativa";
+        string sAssunto = "Existe análise fora de especificação e inativa para sua avaliação. \n\n<br><br>";
+        sAssunto += "Data: " + txt_dat_inc.Text + " \n<br>";
+        sAssunto += "Lote: " + txt_lot_inc.Text + " \n<br>";
+        if (chk_lot_tst_inc.Checked)
+        {
+            sAssunto += "Lote Teste: Sim \n<br>";
+        }
+        else
+        {
+            sAssunto += "Lote Teste: Não \n<br>";
+        }
+        sAssunto += "Título: " + cbo_tit_poy_id_inc.SelectedItem.Text + " \n<br>";
+        sAssunto += "Apresentação: " + cbo_aps_id_inc.SelectedItem.Text + " \n<br>";
+        sAssunto += "Máquina: " + cbo_maq_id_inc.SelectedItem.Text + " \n<br>";
+        sAssunto += "Entrelaçamento: " + cbo_ert_id_inc.SelectedItem.Text + " \n<br>";
+        sAssunto += "Virada: " + txt_vrd_inc.Text + " \n<br>";
+        sAssunto += "\n<br>";
+        sAssunto += sFora + "\n<br>";
+
+        string sListaCaminhoAnexo = "";
+        string sServer = ConfigurationManager.AppSettings["ServidorSMTP"];
+        string sUsuario = ConfigurationManager.AppSettings["UsuarioSMTP"];
+        string sSenha = ConfigurationManager.AppSettings["SenhaSMTP"];
+        bool bSSL = Convert.ToBoolean(ConfigurationManager.AppSettings["SSLSMTP"]);
+        int iPortaSmtp = Convert.ToInt32(ConfigurationManager.AppSettings["PortaSMTP"]);
+
+        Email Email = new Email();
+        Email.EnviarEmail(sRemetente, sListaDestinatario, sListaCopia, sListaCopiaOculta, bFormatoHTML, sTitulo, sAssunto, sListaCaminhoAnexo, sServer, bSSL, iPortaSmtp, sUsuario, sSenha);
+
+        Response.Write("<script language=\"javascript\">alert('Email enviado com sucesso ao perfil P&D e CONTROLE DE PROCESSO.')</script>");
+    }
+}

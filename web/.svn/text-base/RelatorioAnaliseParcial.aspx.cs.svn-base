@@ -1,0 +1,657 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.IO;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+
+using FWBDS;
+
+public partial class _Default : System.Web.UI.Page
+{
+   protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            FormataControles();
+            CarregaControles();
+        }
+    }
+
+    protected void FormataControles()
+    {
+        txt_rts.Focus();
+    }
+
+    protected void CarregaControles()
+    {
+        Titulo Titulo = new Titulo();
+        DataSet dsTitulo = Titulo.Consultar();
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id_rel);
+        dsTitulo.Dispose();
+
+        Entrelacamento Entrelacamento = new Entrelacamento();
+        DataSet dsEntrelacamento = Entrelacamento.Consultar();
+        FWGNR.VerificaStatus(dsEntrelacamento, "ERT_ID", "ERT_DES", "ERT_STS", cbo_ert_id_rel);
+        dsEntrelacamento.Dispose();
+
+        Apresentacao Apresentacao = new Apresentacao();
+        DataSet dsApresentacao = Apresentacao.Consultar();
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id_rel);
+        dsApresentacao.Dispose();
+
+        Fornecedor Fornecedor = new Fornecedor();
+        Fornecedor.FOR_TIP = "T"; //Somente Texturizados
+        DataSet dsFornecedor = Fornecedor.Consultar();
+        FWGNR.VerificaStatus(dsFornecedor, "FOR_ID", "FOR_NOM", "FOR_STS", cbo_for_001_id_rel);
+        FWGNR.VerificaStatus(dsFornecedor, "FOR_ID", "FOR_NOM", "FOR_STS", cbo_for_002_id_rel);
+        FWGNR.VerificaStatus(dsFornecedor, "FOR_ID", "FOR_NOM", "FOR_STS", cbo_for_003_id_rel);
+        FWGNR.VerificaStatus(dsFornecedor, "FOR_ID", "FOR_NOM", "FOR_STS", cbo_for_004_id_rel);
+        dsFornecedor.Dispose();
+
+        Maquina Maquina = new Maquina();
+        DataSet dsMaquina = Maquina.Consultar();
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id_rel);
+        dsMaquina.Dispose();
+
+        GrupoMaterial GrupoMaterial = new GrupoMaterial();
+        DataSet dsGrupoMaterial = GrupoMaterial.Consultar();
+        FWGNR.VerificaStatus(dsGrupoMaterial, "GRP_MRL_ID", "GRP_MRL_DES", "GRP_MRL_STS", cbo_grp_mrl_id_inc);
+        dsGrupoMaterial.Dispose();
+    }
+
+    protected string CriaFiltro(RTS RTS)
+    {
+        string filtro = "";
+        if (!String.IsNullOrEmpty(txt_rts.Text))
+        {
+            RTS.RTS_ID = Convert.ToInt32(txt_rts.Text);
+            filtro = filtro + "RTS= " + txt_rts.Text + "; ";
+        }
+        return filtro;
+    }
+
+    protected void btProcurar_Click(object sender, EventArgs e)
+    {
+
+        if (txt_rts.Text == "")
+        {
+            TratamentoErro("O campo RTS é obrigatório.");
+            txt_rts.Focus();
+            return;
+        }
+
+        string filtro = "";
+
+        RTS RTS = new RTS();
+        filtro = CriaFiltro(RTS);
+        DataSet dsRTS = RTS.Consultar();
+        if (dsRTS.Tables[0].Rows.Count > 0)
+        {
+            txt_rts_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_ID"].ToString();
+            txt_dat_rel.Text = Convert.ToDateTime(dsRTS.Tables[0].Rows[0]["RTS_DAT"].ToString()).ToString("dd/MM/yyyy");
+            txt_lot_ref_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_LOT_REF"].ToString();
+            txt_cbo_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_CBO"].ToString();
+            cbo_tit_poy_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_TIT_POY_ID"].ToString();
+            txt_tit_poy_id_rel.Text = cbo_tit_poy_id_rel.SelectedItem.Text;
+            cbo_ert_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_ERT_ID"].ToString();
+            txt_ert_id_rel.Text = cbo_ert_id_rel.SelectedItem.Text;
+            cbo_aps_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_APS_ID"].ToString();
+            txt_aps_id_rel.Text = cbo_aps_id_rel.SelectedItem.Text;
+            txt_lot_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_LOT"].ToString();
+            cbo_for_001_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_FOR_001_ID"].ToString();
+            txt_for_001_id_rel.Text = cbo_for_001_id_rel.SelectedItem.Text;
+            cbo_for_002_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_FOR_002_ID"].ToString();
+            txt_for_002_id_rel.Text = cbo_for_002_id_rel.SelectedItem.Text;
+            cbo_for_003_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_FOR_003_ID"].ToString();
+            txt_for_003_id_rel.Text = cbo_for_003_id_rel.SelectedItem.Text;
+            cbo_for_004_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_FOR_004_ID"].ToString();
+            txt_for_004_id_rel.Text = cbo_for_004_id_rel.SelectedItem.Text;
+            txt_mge_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_MGE"].ToString();
+            txt_mge_002_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_MGE_002"].ToString();
+            txt_mge_003_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_MGE_003"].ToString();
+            txt_mge_004_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_MGE_004"].ToString();
+            cbo_maq_id_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_MAQ_ID"].ToString();
+            txt_maq_id_rel.Text = cbo_maq_id_rel.SelectedItem.Text;
+            txt_qbr_tur_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_QBR_TUR"].ToString();
+            txt_qbr_kio_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_QBR_KIO"].ToString();
+
+            txt_prc_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_PRC"].ToString();
+            txt_efc_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_EFC"].ToString();
+            txt_vel_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_VEL"].ToString();
+            txt_qbr_pnv_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_QBR_PNV"].ToString();
+            txt_qbr_dnv_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_QBR_DNV"].ToString();
+
+            txt_pao_001_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_PAO_001"].ToString();
+            txt_pao_002_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_PAO_002"].ToString();
+            txt_jet_001_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_JET_001"].ToString();
+            txt_jet_002_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_JET_002"].ToString();
+            txt_car_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_QBR_CAR"].ToString();
+            cbo_grp_mrl_id_inc.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_GRP_MRL_ID"].ToString();
+            txt_grp_mrl_id_inc.Text = cbo_grp_mrl_id_inc.SelectedItem.Text;
+
+            txt_spe_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_SPE"].ToString();
+            txt_obs_rel.Text = dsRTS.Tables[0].Rows[0]["RTS_OBS_PED"].ToString();
+            cbo_sts_rel.SelectedValue = dsRTS.Tables[0].Rows[0]["RTS_STS"].ToString();
+            txt_sts_rel.Text = cbo_sts_rel.SelectedItem.Text;
+
+            if (!string.IsNullOrEmpty(dsRTS.Tables[0].Rows[0]["RTS_PED_USR_ID"].ToString()))
+            {
+                Usuario Usuario = new Usuario();
+                Usuario.USR_ID = Convert.ToInt32(dsRTS.Tables[0].Rows[0]["RTS_PED_USR_ID"].ToString());
+                DataSet dsUsuario = Usuario.Consultar();
+                if (dsUsuario.Tables[0].Rows.Count > 0)
+                {
+                    txt_ped_rsp_rel.Text = dsUsuario.Tables[0].Rows[0]["USR_NOM"].ToString();
+                }
+                dsUsuario.Dispose();
+            }
+            Dispose();
+        }
+        dsRTS.Dispose();
+        Dispose();
+
+        //Standard EPF = new Standard();
+        //EPF.EPF_LOT = txt_lot_rel.Text;
+        //DataSet dsEPF = EPF.Consultar();
+        //if (dsEPF.Tables[0].Rows.Count > 0)
+        //{
+        //    txt_lot_ref_rel.Text = dsEPF.Tables[0].Rows[0]["EPF_LOT_REF"].ToString();
+        //}
+        //dsEPF.Dispose();
+        //Dispose();
+
+        if (!string.IsNullOrEmpty(txt_lot_rel.Text))
+        {
+            //Analise Analise = new Analise();
+            //Analise.ANS_LOT = txt_lot_ref_rel.Text;
+            //Analise.ANS_STS = 1; //Ativo
+            //DataSet dsAnalise = Analise.ConsultarMedia();
+            //if (dsAnalise.Tables[0].Rows.Count > 0)
+            //{
+            Especificacao Especificacao = new Especificacao();
+            Especificacao.ANE_LOT = txt_lot_rel.Text;
+            Especificacao.ANE_STS = 1; //Ativo
+            DataSet dsEspecificacao = Especificacao.Consultar();
+            if (dsEspecificacao.Tables[0].Rows.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MED"].ToString()))
+                {
+                    txt_tit_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MED"].ToString()))
+                {
+                    txt_tnc_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MED"].ToString()))
+                {
+                    txt_aon_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MED"].ToString()))
+                {
+                    txt_enm_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MED"].ToString()))
+                {
+                    txt_eee_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MED"].ToString()))
+                {
+                    txt_kkk_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MED"].ToString()))
+                {
+                    txt_bbb_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MED"].ToString()))
+                {
+                    txt_trq_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MED"].ToString()))
+                {
+                    txt_ert_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MED"].ToString()))
+                {
+                    txt_rt3_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MED"].ToString()))
+                {
+                    txt_rt5_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MED"].ToString()))
+                {
+                    txt_dnd_med_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MED"].ToString()).ToString("N3");
+                }            
+                //txt_dmo_med_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MED"].ToString();
+                //txt_pes_med_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MED"].ToString();
+
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MIN"].ToString()))
+                {
+                    txt_tit_min_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MIN"].ToString()))
+                {
+                    txt_tnc_min_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MIN"].ToString()))
+                {
+                    txt_aon_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MIN"].ToString()))
+                {
+                    txt_enm_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MIN"].ToString()))
+                {
+                    txt_eee_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MIN"].ToString()))
+                {
+                    txt_kkk_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MIN"].ToString()))
+                {
+                    txt_bbb_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MIN"].ToString()))
+                {
+                    txt_trq_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MIN"].ToString()))
+                {
+                    txt_ert_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MIN"].ToString()))
+                {
+                    txt_rt3_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MIN"].ToString()))
+                {
+                    txt_rt5_min_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MIN"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MIN"].ToString()))
+                {
+                    txt_dnd_min_rel.Text = Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MIN"].ToString()).ToString("N3");
+                }
+                //txt_dmo_min_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MIN"].ToString();
+                //txt_pes_min_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MIN"].ToString();
+
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MAX"].ToString()))
+                {
+                    txt_tit_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TIT_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MAX"].ToString()))
+                {
+                    txt_tnc_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TNC_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MAX"].ToString()))
+                {
+                    txt_aon_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_AON_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MAX"].ToString()))
+                {
+                    txt_enm_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ENM_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MAX"].ToString()))
+                {
+                    txt_eee_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_EEE_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MAX"].ToString()))
+                {
+                    txt_kkk_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_KKK_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MAX"].ToString()))
+                {
+                    txt_bbb_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_BBB_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MAX"].ToString()))
+                {
+                    txt_trq_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_TRQ_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MAX"].ToString()))
+                {
+                    txt_ert_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_ERT_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MAX"].ToString()))
+                {
+                    txt_rt3_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT3_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MAX"].ToString()))
+                {
+                    txt_rt5_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_RT5_MAX"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MAX"].ToString()))
+                {
+                    txt_dnd_max_rel.Text= Convert.ToDouble(dsEspecificacao.Tables[0].Rows[0]["ANE_DND_MAX"].ToString()).ToString("N3");
+                }
+                //txt_dmo_max_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_DMO_MAX"].ToString();
+                //txt_pes_max_rel.Text = dsEspecificacao.Tables[0].Rows[0]["ANE_PES_MAX"].ToString();
+            }
+            dsEspecificacao.Dispose();
+        }
+
+        if (!string.IsNullOrEmpty(txt_lot_ref_rel.Text))
+        {
+            //Standard EPF_REF = new Standard();
+            //EPF_REF.EPF_LOT = txt_lot_ref_rel.Text;
+            //EPF_REF.EPF_STS = 1; //Ativo
+            //DataSet dsEPF_REF = EPF_REF.Consultar();
+            //if (dsEPF_REF.Tables[0].Rows.Count > 0)
+            //{
+            Analise Analise = new Analise();
+            Analise.ANS_LOT = txt_lot_ref_rel.Text;
+            Analise.ANS_STS = 1; //Ativo
+            DataSet dsAnalise = Analise.ConsultarMedia();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["TIT_MED"].ToString()))
+                {
+                    txt_tit_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["TIT_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["TNC_MED"].ToString()))
+                {
+                    txt_tnc_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["TNC_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["AON_MED"].ToString()))
+                {
+                    txt_aon_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["AON_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ENM_MED"].ToString()))
+                {
+                    txt_enm_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["ENM_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["EEE_MED"].ToString()))
+                {
+                    txt_eee_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["EEE_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["KKK_MED"].ToString()))
+                {
+                    txt_kkk_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["KKK_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["BBB_MED"].ToString()))
+                {
+                    txt_bbb_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["BBB_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["TRQ_MED"].ToString()))
+                {
+                    txt_trq_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["TRQ_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["ERT_MED"].ToString()))
+                {
+                    txt_ert_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["ERT_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["RT3_MED"].ToString()))
+                {
+                    txt_rt3_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["RT3_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["RT5_MED"].ToString()))
+                {
+                    txt_rt5_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["RT5_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["DND_MED"].ToString()))
+                {
+                    txt_dnd_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["DND_MED"].ToString()).ToString("N3");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["DMO_MED"].ToString()))
+                {
+                    txt_dmo_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["DMO_MED"].ToString()).ToString("N2");
+                }
+                if (!string.IsNullOrEmpty(dsAnalise.Tables[0].Rows[0]["PES_MED"].ToString()))
+                {
+                    txt_pes_ref_rel.Text = Convert.ToDouble(dsAnalise.Tables[0].Rows[0]["PES_MED"].ToString()).ToString("N2");
+                }
+            }
+            dsAnalise.Dispose();
+        }
+
+        Teste Teste = new Teste();
+        Teste.TST_RTS_ID = Convert.ToInt32(txt_rts_rel.Text);
+        Teste.TST_STS = 1; //Ativo
+        DataSet dsTeste = Teste.Consultar();
+        if (dsTeste.Tables[0].Rows.Count > 0)
+        {
+            Teste TST = new Teste();
+            TST.TST_ID = Convert.ToInt32(dsTeste.Tables[0].Rows[0]["TST_ID"].ToString());
+            DataSet dsTST = TST.ConsultarSequencia();
+            if (dsTST.Tables[0].Rows.Count > 0)
+            {
+                txt_qtd_tst_rel.Text = "0";
+                for (int i = 0; i <= 7; i++)
+                {
+                    if (VerificaTestePreenchido(dsTST.Tables[0].Rows[i]))
+                    {
+                        txt_qtd_tst_rel.Text = i.ToString();
+                    }
+
+                    if (!string.IsNullOrEmpty(dsTST.Tables[0].Rows[i]["TST_EGM"].ToString()))
+                    {
+                        txt_egm_ref_rel.Text = dsTST.Tables[0].Rows[i]["TST_EGM"].ToString();
+                    }
+                }
+            }
+            dsTST.Dispose();
+
+            txt_dat_ini_rel.Text = Convert.ToDateTime(dsTeste.Tables[0].Rows[0]["TST_DAT_INI"].ToString()).ToString("dd/MM/yyyy");            
+
+            string s_dat_ini = Convert.ToDateTime(dsTeste.Tables[0].Rows[0]["TST_DAT_INI"].ToString()).ToString("dd/MM/yyyy");
+            string s_hor_ini = Convert.ToDateTime(dsTeste.Tables[0].Rows[0]["TST_DAT_INI"].ToString()).ToString("HH:mm");
+            string s_dat_fim = Convert.ToDateTime(dsTeste.Tables[0].Rows[0]["TST_DAT_FIM"].ToString()).ToString("dd/MM/yyyy");
+            string s_hor_fim = Convert.ToDateTime(dsTeste.Tables[0].Rows[0]["TST_DAT_FIM"].ToString()).ToString("HH:mm");
+            calculaTempoGasto(s_dat_ini, s_hor_ini, s_dat_fim, s_hor_fim);
+
+        }
+        dsTeste.Dispose();
+        Dispose();
+
+        ///* Não apresentar filtros e barra de identificação 
+        // * pois o relatório é impresso e enviado ao cliente
+
+        /*        
+        if (!String.IsNullOrEmpty(filtro))
+        {
+            lb_fil.Text = filtro;
+        }
+        else
+        {
+            lb_fil.Text = "Não há filtros.";
+        }      
+        */
+
+        Body.Attributes.Remove("class");
+
+        ucBarra.Visible = false;
+
+        dvFiltro.Visible = false;
+        dvResultado.Visible = true;
+    }
+
+    private void TratamentoErro(string erro)
+    {
+        if (!string.IsNullOrEmpty(erro))
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "AlertErro", "alert('" + erro + "');", true);
+    }
+
+    protected void calculaTempoGasto(string s_dat_ini, string s_hor_ini, string s_dat_fim, string s_hor_fim)
+    {
+        txt_hor_gst_rel.Text = "";
+
+        if (!string.IsNullOrEmpty(s_dat_ini) && !string.IsNullOrEmpty(s_hor_ini) && !string.IsNullOrEmpty(s_dat_fim) && !string.IsNullOrEmpty(s_hor_fim))
+        {
+            DateTime dtIni;
+            try
+            {
+                dtIni = DateTime.Parse(s_dat_ini + " " + s_hor_ini);
+            }
+            catch
+            {
+                return;
+            }
+
+            DateTime dtFim;
+            try
+            {
+                dtFim = DateTime.Parse(s_dat_fim + " " + s_hor_fim);
+            }
+            catch
+            {
+                return;
+            }
+
+            TimeSpan tsGst = dtFim.Subtract(dtIni);
+            txt_hor_gst_rel.Text = Math.Truncate(tsGst.TotalHours).ToString("00") + ":" + tsGst.Minutes.ToString("00");
+        }
+    }
+
+
+    protected bool VerificaTestePreenchido(DataRow drTeste)
+    {
+        bool bPreenchido = false;
+
+        if (!string.IsNullOrEmpty(drTeste["TST_EGM"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_VW2"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EGM"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DYY"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_2WX"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_3W3"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_4W4"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_AGL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TUP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_VEO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_T1T"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_T1C"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_T1L"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_T2F"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SVE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_STF"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_STM"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SCE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SCO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SCH"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SCG"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SEE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SEO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SEH"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SEG"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SJC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SJT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SJB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SPJ"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SBC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SPO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SVA"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TIP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DSB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TCA"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_FMC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_1TB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_1PP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_2TB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_2PP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_P1C"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_CSO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ESP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TOL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_P2D"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_P3D"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_P4U"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_MOL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TPD"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TT1"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TT2"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TT3"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_T21"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TUN"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TCV"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TSS"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TIT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TNC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_AON"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ENM"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EEE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_KKK"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_BBB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_OLE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TRQ"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ERT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_RT3"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_RT5"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DND"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DMO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_PES"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_VRR"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TRE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_LME"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_UME"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_LPE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_UPE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_UCV"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DUR"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DFT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_LMC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_UMC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_LPC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_UPC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_CVC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DFC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TFS"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_FSW"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_WFW"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_MOL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TGR"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EOL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETU"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETD"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECU"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EGD"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EEC"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECD"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EGU"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ESO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ESI"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECR"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EOD"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EAW"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ED1"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ED2"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_PCO"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_PCV"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_DRT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_TAL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_VAL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_SJE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETA"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETH"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETG"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EDT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EFP"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EYT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EDL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EAB"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECA"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ECW"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ETT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ERE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_ELE"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EPT"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_EPL"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_CTX"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_CVX"].ToString())) bPreenchido = true;
+        if (!string.IsNullOrEmpty(drTeste["TST_CVR"].ToString())) bPreenchido = true;
+
+        return bPreenchido;
+    }
+
+}

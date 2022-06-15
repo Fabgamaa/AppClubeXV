@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1A798F38-4B9F-413B-9B9F-24F164D437AB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FWBDS</RootNamespace>
+    <AssemblyName>FWBDS</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Acesso.cs" />
+    <Compile Include="Banco.cs" />
+    <Compile Include="Cidade.cs" />
+    <Compile Include="CEP.cs" />
+    <Compile Include="Anexo.cs" />
+    <Compile Include="Caixa.cs" />
+    <Compile Include="Apresentacao.cs" />
+    <Compile Include="Analise.cs" />
+    <Compile Include="Afinidade.cs" />
+    <Compile Include="Cliente.cs" />
+    <Compile Include="Categoria.cs" />
+    <Compile Include="DistribuicaoVirada.cs" />
+    <Compile Include="LancamentoMaquina.cs" />
+    <Compile Include="Operador.cs" />
+    <Compile Include="EspecificacaoDynafil.cs" />
+    <Compile Include="ParametroAnalise.cs" />
+    <Compile Include="Defeito.cs" />
+    <Compile Include="Patrimonio.cs" />
+    <Compile Include="Tensao_Stahle.cs" />
+    <Compile Include="Taxa_Stahle.cs" />
+    <Compile Include="Overfix_Stahle.cs" />
+    <Compile Include="Overfeed_Stahle.cs" />
+    <Compile Include="OLT.cs" />
+    <Compile Include="DOFF.cs" />
+    <Compile Include="Motivo.cs" />
+    <Compile Include="Overfeed_M900.cs" />
+    <Compile Include="Engrenagem_M900.cs" />
+    <Compile Include="GrupoMaterial.cs" />
+    <Compile Include="Fio.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="EspecificacaoLimite.cs" />
+    <Compile Include="Especificacao.cs" />
+    <Compile Include="Filamento.cs" />
+    <Compile Include="Dynafil.cs" />
+    <Compile Include="Standard.cs" />
+    <Compile Include="Teste.cs" />
+    <Compile Include="Escolha.cs" />
+    <Compile Include="Titulo.cs" />
+    <Compile Include="RTS.cs" />
+    <Compile Include="SeccaoTransversal.cs" />
+    <Compile Include="MotivoTeste.cs" />
+    <Compile Include="Maticidade.cs" />
+    <Compile Include="Marca.cs" />
+    <Compile Include="MaquinaTipo.cs" />
+    <Compile Include="Maquina.cs" />
+    <Compile Include="Fornecedor.cs" />
+    <Compile Include="Entrelacamento.cs" />
+    <Compile Include="Cor.cs" />
+    <Compile Include="Performance.cs" />
+    <Compile Include="Observacao.cs" />
+    <Compile Include="TipoAnexo.cs" />
+    <Compile Include="Estado.cs" />
+    <Compile Include="Funcao.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="Pais.cs" />
+    <Compile Include="Perfil.cs" />
+    <Compile Include="PerfilFuncao.cs" />
+    <Compile Include="PerfilMenu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Usuario.cs" />
+    <Compile Include="UsuarioFuncao.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

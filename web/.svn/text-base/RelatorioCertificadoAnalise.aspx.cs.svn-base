@@ -1,0 +1,395 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.IO;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+
+using FWBDS;
+
+public partial class _Default : System.Web.UI.Page
+{
+   protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            FormataControles();
+            CarregaControles();
+        }
+    }
+
+    protected void FormataControles()
+    {
+        txt_dat_ini.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat_ini.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+        txt_dat_fim.Attributes.Add("onKeyPress", "javascript:f_filtra_teclas_data();");
+        txt_dat_fim.Attributes.Add("onBlur", "javascript:f_valida_data(this);");
+        txt_dat_ini.Focus();
+    }
+
+    protected void CarregaControles()
+    {
+        Titulo Titulo = new Titulo();
+        DataSet dsTitulo = Titulo.Consultar();
+        FWGNR.VerificaStatus(dsTitulo, "TIT_POY_ID", "TIT_POY_DES", "TIT_POY_STS", cbo_tit_poy_id);
+        dsTitulo.Dispose();
+
+        AnaliseTipo AnaliseTipo = new AnaliseTipo();
+        DataSet dsAnaliseTipo = AnaliseTipo.Consultar();
+
+        cbo_ans_tip.DataSource = dsAnaliseTipo;
+        cbo_ans_tip.DataTextField = "ANS_TIP_DES";
+        cbo_ans_tip.DataValueField = "ANS_TIP_DES";
+        cbo_ans_tip.DataBind();
+        
+        Apresentacao Apresentacao = new Apresentacao();
+        DataSet dsApresentacao = Apresentacao.Consultar();
+        FWGNR.VerificaStatus(dsApresentacao, "APS_ID", "APS_DES", "APS_STS", cbo_aps_id);
+        dsApresentacao.Dispose();
+
+        Maquina Maquina = new Maquina();
+        DataSet dsMaquina = Maquina.Consultar();
+        FWGNR.VerificaStatus(dsMaquina, "MAQ_ID", "MAQ_DES", "MAQ_STS", cbo_maq_id);
+        dsMaquina.Dispose();
+    }
+
+    protected string CriaFiltro(Analise Analise)
+    {
+        string filtro = "";
+        if (!String.IsNullOrEmpty(txt_dat_ini.Text))
+        {
+            Analise.ANS_DAT = Convert.ToDateTime(txt_dat_ini.Text);
+            //Comentado a Pedido do Thiago
+            //filtro = filtro + "Data Inicial= " + txt_dat_ini.Text + ", ";
+        }
+        if (!String.IsNullOrEmpty(txt_dat_fim.Text))
+        {
+            Analise.ANS_DAT = Convert.ToDateTime(txt_dat_fim.Text);
+            //Comentado a Pedido do Thiago
+           //filtro = filtro + "Data fimcial= " + txt_dat_fim.Text + ", ";
+        }
+        if (!String.IsNullOrEmpty(cbo_tit_poy_id.Text))
+        {
+            Analise.ANS_TIT_POY_ID = Convert.ToInt32(cbo_tit_poy_id.SelectedValue);
+            filtro = filtro + "Título= " + cbo_tit_poy_id.SelectedItem.Text + ", ";
+        }
+        if (!String.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise.ANS_LOT = txt_lot.Text;
+            filtro = filtro + "Lote= " + txt_lot.Text + ", ";
+        }
+
+        String sFiltro = "";
+        foreach (System.Web.UI.WebControls.ListItem ans_tip in cbo_ans_tip.Items)
+        {
+            if (ans_tip.Selected)
+            {
+                Analise.LST_ANS_TIP = Analise.LST_ANS_TIP + "'" + ans_tip.Value + "', ";
+                sFiltro = sFiltro + " " + ans_tip.Text + "; ";
+            }
+        }
+        if (!String.IsNullOrEmpty(Analise.LST_ANS_TIP))
+        {
+            //Retira ", " final
+            Analise.LST_ANS_TIP = Analise.LST_ANS_TIP.Substring(0, Analise.LST_ANS_TIP.Length - 2);
+            filtro = filtro + "Tipo de Análise= " + sFiltro;
+        }
+
+        if (!String.IsNullOrEmpty(cbo_aps_id.Text))
+        {
+            Analise.ANS_APS_ID = Convert.ToInt32(cbo_aps_id.SelectedValue);
+            filtro = filtro + "Apresentação= " + cbo_aps_id.SelectedItem.Text + ", ";
+        }
+        if (!String.IsNullOrEmpty(cbo_maq_id.Text))
+        {
+            Analise.ANS_MAQ_ID = Convert.ToInt32(cbo_maq_id.SelectedValue);
+            //Comentado a Pedido do Thiago
+            //filtro = filtro + "Máquina= " + cbo_maq_id.SelectedItem.Text + ", ";
+        }
+        if (!String.IsNullOrEmpty(cbo_sts.Text))
+        {
+            Analise.ANS_STS = Convert.ToInt32(cbo_sts.SelectedValue);
+            //Comentado a Pedido do Thiago
+            //filtro = filtro + "Status= " + cbo_sts.SelectedItem.Text + ", ";
+        }
+
+        if (!string.IsNullOrEmpty(filtro))
+        {            
+            filtro = " Certificado de Análise, " + filtro;
+            filtro = filtro.Substring(0, filtro.Length - 2);
+        }
+        return filtro;
+    }
+
+    protected void btProcurar_Click(object sender, EventArgs e)
+    {
+        string filtro = "";
+
+        Analise AnaliseMedia = new Analise();
+        filtro = CriaFiltro(AnaliseMedia);
+        DataSet dsAnaliseMedia = AnaliseMedia.ConsultarMedia();
+        if (dsAnaliseMedia.Tables[0].Rows.Count > 0)
+        {
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED"].ToString()))
+            {
+                lb_tit_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TIT_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED"].ToString()))
+            {
+                lb_tnc_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TNC_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED"].ToString()))
+            {
+                lb_aon_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["AON_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED"].ToString()))
+            {
+                lb_enm_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ENM_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED"].ToString()))
+            {
+                lb_eee_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["EEE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED"].ToString()))
+            {
+                lb_kkk_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["KKK_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED"].ToString()))
+            {
+                lb_bbb_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["BBB_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED"].ToString()))
+            {
+                lb_pue_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["PUE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED"].ToString()))
+            {
+                lb_ole_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["OLE_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED"].ToString()))
+            {
+                lb_trq_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["TRQ_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED"].ToString()))
+            {
+                lb_ert_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["ERT_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED"].ToString()))
+            {
+                lb_dmo_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DMO_MED"].ToString()).ToString("0.0");
+            }
+            if (!string.IsNullOrEmpty(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED"].ToString()))
+            {
+                lb_dnd_rel.Text = Convert.ToDouble(dsAnaliseMedia.Tables[0].Rows[0]["DND_MED"].ToString()).ToString("0.000");
+            }
+        }
+        dsAnaliseMedia.Dispose();
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);        
+        DataSet dsAnalise = Analise.Consultar();
+
+        gvAnalise.DataSource = dsAnalise;
+        gvAnalise.DataBind();
+        dsAnalise.Dispose();
+        Dispose();
+
+        ///* Apresentar filtros e não barra de identificação 
+        // * pois o relatório é impresso e enviado ao cliente
+        
+        if (!String.IsNullOrEmpty(filtro))
+        {
+            lb_fil.Text = filtro;
+        }
+        else
+        {
+            lb_fil.Text = "Não há filtros.";
+        }      
+
+        Body.Attributes.Remove("class");
+
+        ucBarra.Visible = false;
+
+        dvFiltro.Visible = false;
+        dvResultado.Visible = true;
+    }
+
+    protected void gvAnalise_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            e.Row.Attributes.Add("onMouseOver", "this.className='selecionado';");
+            if ((e.Row.RowIndex % 2) == 0)
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_par';");
+            }
+            else
+            {
+                e.Row.Attributes.Add("onMouseOut", "this.className='linha_impar';");
+            }
+        }
+    }
+
+    private SortDirection GridViewSortDirection
+    {
+        get
+        {
+            if (ViewState["sortDirection"] == null)
+                ViewState["sortDirection"] = SortDirection.Ascending;
+            return (SortDirection)ViewState["sortDirection"];
+        }
+        set { ViewState["sortDirection"] = value; }
+    }
+
+    private int GetSortColumnIndex()
+    {
+        foreach (DataControlField field in gvAnalise.Columns)
+        {
+            if (field.SortExpression == (string)ViewState["SortExpression"])
+            {
+                return gvAnalise.Columns.IndexOf(field);
+            }
+        }
+        return -1;
+    }
+
+    private void AddSortImage(int columnIndex, GridViewRow headerRow)
+    {
+        System.Web.UI.WebControls.Image sortImage = new System.Web.UI.WebControls.Image();
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            sortImage.ImageUrl = "img/arrow_down.gif";
+            sortImage.AlternateText = "Ordem Ascendente";
+        }
+        else
+        {
+            sortImage.ImageUrl = "img/arrow_up.gif";
+            sortImage.AlternateText = "Ordem Descendente";
+        }
+        headerRow.Cells[columnIndex].Controls.Add(sortImage);
+    }
+
+    protected void gvAnalise_RowCreated(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            int sortColumnIndex = GetSortColumnIndex();
+            if (sortColumnIndex != -1)
+            {
+                AddSortImage(sortColumnIndex, e.Row);
+            }
+        }
+    }
+
+    protected void gvAnalise_Sorting(Object sender, GridViewSortEventArgs e)
+    {
+        string Ordem = " ASC ";
+        string sortExpression = e.SortExpression;
+        ViewState["SortExpression"] = sortExpression;
+        if (GridViewSortDirection == SortDirection.Ascending)
+        {
+            GridViewSortDirection = SortDirection.Descending;
+            Ordem = " DESC ";
+        }
+        else
+        {
+            GridViewSortDirection = SortDirection.Ascending;
+            Ordem = " ASC ";
+        }
+
+        string filtro = "";
+
+        Analise Analise = new Analise();
+        filtro = CriaFiltro(Analise);
+        DataSet dsAnalise = Analise.Consultar();
+
+        DataTable dtAnalise = dsAnalise.Tables[0];
+        DataView dvAnalise = new DataView(dtAnalise);
+        dvAnalise.Sort = e.SortExpression + Ordem;
+        gvAnalise.DataSource = dvAnalise;
+        gvAnalise.DataBind();
+
+        dvAnalise.Dispose();
+        dtAnalise.Dispose();
+        dsAnalise.Dispose();
+        Dispose();
+    }
+
+    private void TratamentoErro(string erro)
+    {
+        if (!string.IsNullOrEmpty(erro))
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "AlertErro", "alert('" + erro + "');", true);
+    }
+    
+    protected void lkb_xls_Click(object sender, EventArgs e)
+    {
+        if (gvAnalise.Rows.Count > 0)
+        {
+            Response.Clear();
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment;filename=CertificadoAnalise.xls");
+            //Sem a opção de Salvar
+            //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+            StringWriter stringWrite = new StringWriter();
+            HtmlTextWriter htmlWrite = new HtmlTextWriter(stringWrite);
+            gvAnalise.AllowSorting = false;
+            gvAnalise.AllowPaging = false;
+
+            // Deixar cabeçalho em branco/preto, sem links e imagens
+
+            for (int i = 0; i < gvAnalise.HeaderRow.Cells.Count; i++)
+            {
+                LinkButton lnk = (LinkButton)gvAnalise.HeaderRow.Cells[i].Controls[0];
+                lnk.Enabled = false;
+                lnk.BackColor = System.Drawing.Color.White;
+                lnk.ForeColor = System.Drawing.Color.Black;
+            }
+
+            lkb_xls.Visible = false;
+
+            frmRelatorioAnalise.RenderControl(htmlWrite);
+
+            Response.Write(stringWrite.ToString());
+            Response.End();
+        }
+        else
+        {
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "alerta", "alert('Não há registros para exportação !');", true);
+        }
+    }
+
+    public override void VerifyRenderingInServerForm(Control control)
+    {
+
+    }
+
+    protected void txt_lot_OnTextChanged(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(txt_lot.Text))
+        {
+            Analise Analise = new Analise();
+            Analise.ANS_LOT = txt_lot.Text;
+            DataSet dsAnalise = Analise.Consultar();
+            if (dsAnalise.Tables[0].Rows.Count > 0)
+            {
+                cbo_tit_poy_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_TIT_POY_ID"].ToString();
+                cbo_aps_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_APS_ID"].ToString();
+                //cbo_maq_id.SelectedValue = dsAnalise.Tables[0].Rows[0]["ANS_MAQ_ID"].ToString();
+            }
+            dsAnalise.Dispose();
+            Dispose();
+        }
+    }
+}

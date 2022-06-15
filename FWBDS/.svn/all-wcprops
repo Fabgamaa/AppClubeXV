@@ -1,0 +1,377 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/FWUNF_DSV/!svn/ver/214/sources/FWUNF_DSV/FWBDS
+END
+Engrenagem_M900.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/94/sources/FWUNF_DSV/FWBDS/Engrenagem_M900.cs
+END
+Motivo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/121/sources/FWUNF_DSV/FWBDS/Motivo.cs
+END
+Filamento.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Filamento.cs
+END
+Escolha.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Escolha.cs
+END
+Titulo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/25/sources/FWUNF_DSV/FWBDS/Titulo.cs
+END
+MotivoTeste.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/MotivoTeste.cs
+END
+Marca.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Marca.cs
+END
+Cliente.cs
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/FWUNF_DSV/!svn/ver/16/sources/FWUNF_DSV/FWBDS/Cliente.cs
+END
+Observacao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Observacao.cs
+END
+EspecificacaoDynafil.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/FWBDS/EspecificacaoDynafil.cs
+END
+MaquinaTipo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/MaquinaTipo.cs
+END
+Email.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Email.cs
+END
+Categoria.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/116/sources/FWUNF_DSV/FWBDS/Categoria.cs
+END
+FWBDS.csproj
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/248/sources/FWUNF_DSV/FWBDS/FWBDS.csproj
+END
+TipoAnexo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/TipoAnexo.cs
+END
+CEP.cs
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/CEP.cs
+END
+DistribuicaoVirada.cs
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/FWUNF_DSV/!svn/ver/281/sources/FWUNF_DSV/FWBDS/DistribuicaoVirada.cs
+END
+GrupoMaterial.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/31/sources/FWUNF_DSV/FWBDS/GrupoMaterial.cs
+END
+Funcao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Funcao.cs
+END
+Operador.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/257/sources/FWUNF_DSV/FWBDS/Operador.cs
+END
+Analise.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/244/sources/FWUNF_DSV/FWBDS/Analise.cs
+END
+PerfilFuncao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/PerfilFuncao.cs
+END
+Acesso.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Acesso.cs
+END
+Fio.cs
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/31/sources/FWUNF_DSV/FWBDS/Fio.cs
+END
+DOFF.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/190/sources/FWUNF_DSV/FWBDS/DOFF.cs
+END
+Especificacao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Especificacao.cs
+END
+Estado.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Estado.cs
+END
+Defeito.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/240/sources/FWUNF_DSV/FWBDS/Defeito.cs
+END
+App.config
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/197/sources/FWUNF_DSV/FWBDS/App.config
+END
+Perfil.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Perfil.cs
+END
+SeccaoTransversal.cs
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/SeccaoTransversal.cs
+END
+Banco.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/194/sources/FWUNF_DSV/FWBDS/Banco.cs
+END
+EspecificacaoLimite.cs
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/EspecificacaoLimite.cs
+END
+Overfix_Stahle.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/FWUNF_DSV/!svn/ver/158/sources/FWUNF_DSV/FWBDS/Overfix_Stahle.cs
+END
+Cor.cs
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Cor.cs
+END
+UsuarioFuncao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/UsuarioFuncao.cs
+END
+Maticidade.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Maticidade.cs
+END
+Teste.cs
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/FWUNF_DSV/!svn/ver/217/sources/FWUNF_DSV/FWBDS/Teste.cs
+END
+Caixa.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Caixa.cs
+END
+Fornecedor.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Fornecedor.cs
+END
+Dynafil.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/237/sources/FWUNF_DSV/FWBDS/Dynafil.cs
+END
+Usuario.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/192/sources/FWUNF_DSV/FWBDS/Usuario.cs
+END
+ParametroAnalise.cs
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/FWUNF_DSV/!svn/ver/228/sources/FWUNF_DSV/FWBDS/ParametroAnalise.cs
+END
+Tensao_Stahle.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/FWUNF_DSV/!svn/ver/158/sources/FWUNF_DSV/FWBDS/Tensao_Stahle.cs
+END
+Maquina.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/FWUNF_DSV/!svn/ver/227/sources/FWUNF_DSV/FWBDS/Maquina.cs
+END
+Pais.cs
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Pais.cs
+END
+Taxa_Stahle.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/158/sources/FWUNF_DSV/FWBDS/Taxa_Stahle.cs
+END
+LancamentoMaquina.cs
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/FWUNF_DSV/!svn/ver/274/sources/FWUNF_DSV/FWBDS/LancamentoMaquina.cs
+END
+OLT.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/188/sources/FWUNF_DSV/FWBDS/OLT.cs
+END
+Overfeed_Stahle.cs
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/FWUNF_DSV/!svn/ver/158/sources/FWUNF_DSV/FWBDS/Overfeed_Stahle.cs
+END
+Standard.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/244/sources/FWUNF_DSV/FWBDS/Standard.cs
+END
+Entrelacamento.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Entrelacamento.cs
+END
+Performance.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Performance.cs
+END
+Menu.cs
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Menu.cs
+END
+Afinidade.cs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/FWUNF_DSV/!svn/ver/246/sources/FWUNF_DSV/FWBDS/Afinidade.cs
+END
+Overfeed_M900.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/FWUNF_DSV/!svn/ver/94/sources/FWUNF_DSV/FWBDS/Overfeed_M900.cs
+END
+Apresentacao.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/24/sources/FWUNF_DSV/FWBDS/Apresentacao.cs
+END
+PerfilMenu.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/FWUNF_DSV/!svn/ver/9/sources/FWUNF_DSV/FWBDS/PerfilMenu.cs
+END
+RTS.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/154/sources/FWUNF_DSV/FWBDS/RTS.cs
+END
+AnaliseTipo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/FWUNF_DSV/!svn/ver/244/sources/FWUNF_DSV/FWBDS/AnaliseTipo.cs
+END
+Cidade.cs
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Cidade.cs
+END
+Anexo.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/FWUNF_DSV/!svn/ver/4/sources/FWUNF_DSV/FWBDS/Anexo.cs
+END

@@ -1,0 +1,382 @@
+﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="RelatorioCertificadoAnalise.aspx.cs" Inherits="_Default"%>
+<%@ Register Src="inc/BarraIdentificacao.ascx" TagName="Barra" TagPrefix="ucBarra"%>
+
+<!--#include file="inc/FWMNUSUB.aspx"-->
+<!-- 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Empresa           : Fourway Informática
+Sistema           : FWUNF
+Arquivo           : RelatorioCertificadoAnalise.aspx 
+Criado em         : 17/12/2010
+Última Alteração  : 
+Versão            : 1.00
+Descrição         : Módulo para Relatório de Certificado de Análise 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head" runat="server">
+<link rel="stylesheet" type="text/css" href="css/FW.css"/>
+	<title><% Response.Write(ConfigurationManager.AppSettings["Titulo"]); %></title>
+</head>
+<body id="Body" runat="server" class="bg" style="margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;width:780px">
+<form id="frmRelatorioAnalise" runat="server">
+<script type="text/javascript" language="javascript" src="scr/FWGNR.js"></script>
+<script type="text/javascript" language="javascript" src="scr/FWMNU.js"></script>
+<ucBarra:Barra ID="ucBarra" runat="server"></ucBarra:Barra>
+<div style="left:5px">
+<div runat="server" id="dvFiltro" visible="true">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td colspan="2" class="font_titulo_grd" style="width:780px">
+			Pesquisar Certificado de Análise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Data Inicial</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:TextBox id="txt_dat_ini" runat="server" CssClass="text_box" maxlength="8" style="width:80px"></asp:TextBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Data Final</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:TextBox id="txt_dat_fim" runat="server" CssClass="text_box" maxlength="8" style="width:80px"></asp:TextBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Lote</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:TextBox id="txt_lot" runat="server" CssClass="text_box" maxlength="10" style="width:100px" OnTextChanged="txt_lot_OnTextChanged" AutoPostBack="true"></asp:TextBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Tipo de Análise</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:ListBox ID="cbo_ans_tip" runat="server" CssClass="combo_box" Height="100px" SelectionMode="Multiple">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:ListBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Título</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_tit_poy_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Apresentação</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_aps_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Máquina</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_maq_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Status</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_sts" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+				<asp:ListItem value="1" Text="ATIVO" Selected="True"></asp:ListItem>
+				<asp:ListItem value="0" Text="INATIVO"></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:Button ID="btProcurar"   runat="server" CssClass="botao" Text="Listar" OnClick="btProcurar_Click" /> 
+		</td>
+	</tr>
+</table>
+</div>
+<div runat="server" id="dvResultado" visible="false">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2"><asp:Image runat="server" ImageUrl="img/logo.jpg" /></td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="font_titulo_grd" style="width:780px">
+			Certificado de Análise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center">
+            <asp:Label ID="lb_fil" runat="server" CssClass="font_body_maiusculo" Font-Size="Medium"/>
+        </td>
+	</tr>
+    <!-- MAP24042012 - Não apresentar mais link de XLS a UNIFI está imprimindo direto para CutePDF
+	<tr>
+		<td colspan="2" align="right">
+			<asp:LinkButton ID="lkb_xls" runat="server" OnClick="lkb_xls_Click" Text="xls" ToolTip="Exporta para XLS"></asp:LinkButton>
+		</td>
+	</tr>
+    -->
+	<tr>
+		<td colspan="2">
+		<table class="cabecalho_tabela" style="text-decoration: none">
+		    <tr>
+		        <td style="width:120px">Média</td>
+		        <td style="width:60px"><asp:Label ID="lb_tit_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_tnc_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_aon_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_enm_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_eee_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_kkk_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_bbb_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_pue_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_ole_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_trq_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_ert_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_dmo_rel" runat="server"></asp:Label></td>
+		        <td style="width:60px"><asp:Label ID="lb_dnd_rel" runat="server"></asp:Label></td>
+		    </tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<asp:Label ID="lblSortLogin" runat="server" Visible="false" Text="ASC"></asp:Label>
+			<asp:GridView CausesValidation="false"   ID="gvAnalise" DataKeyNames="ANS_DAT" 
+				runat="server" AutoGenerateColumns="False" AllowSorting="True" 
+				OnRowDataBound="gvAnalise_RowDataBound"  OnSorting="gvAnalise_Sorting"
+				OnRowCreated="gvAnalise_RowCreated"
+				EmptyDataText="Não foram encontrados registros de acordo com o filtro.">
+			<Columns>
+			<asp:TemplateField HeaderText=" Data " SortExpression="ANS_DAT" ControlStyle-Width="80px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_DAT" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_DAT").ToString())?"":Convert.ToDateTime(Eval("ANS_DAT").ToString()).ToString("dd/MM/yyyy") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="80px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Virada " SortExpression="ANS_VRD" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_VRD" runat="server" Text='<%# Eval("ANS_VRD") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="40px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Título Médio (dtex) " SortExpression="ANS_TIT_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTIT_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_TIT_MED").ToString())?"":Convert.ToDouble(Eval("ANS_TIT_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Tenac. (cN/tex)" SortExpression="ANS_TNC_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTNC_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_TNC_MED").ToString())?"":Convert.ToDouble(Eval("ANS_TNC_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Along. (%)" SortExpression="ANS_AON_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbAON_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_AON_MED").ToString())?"":Convert.ToDouble(Eval("ANS_AON_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Encol. (%)" SortExpression="ANS_ENM_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbENM_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_ENM_MED").ToString())?"":Convert.ToDouble(Eval("ANS_ENM_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" E (%) " SortExpression="ANS_EEE_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbEEE_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_EEE_MED").ToString())?"":Convert.ToDouble(Eval("ANS_EEE_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" K (%) " SortExpression="ANS_KKK_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbKKK_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_KKK_MED").ToString())?"":Convert.ToDouble(Eval("ANS_KKK_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" B (%) " SortExpression="ANS_BBB_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbBBB_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_BBB_MED").ToString())?"":Convert.ToDouble(Eval("ANS_BBB_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" PUE (%) " SortExpression="ANS_PUE_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbPUE_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_PUE_MED").ToString())?"":Convert.ToDouble(Eval("ANS_PUE_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Oleo (%) " SortExpression="ANS_OLE_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbOLE_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_OLE_MED").ToString())?"":Convert.ToDouble(Eval("ANS_OLE_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Torque (T/m/s)" SortExpression="ANS_TRQ_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTRQ_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_TRQ_MED").ToString())?"":Convert.ToDouble(Eval("ANS_TRQ_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Entr. (ptos/m)" SortExpression="ANS_ERT_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbERT_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_ERT_MED").ToString())?"":Convert.ToDouble(Eval("ANS_ERT_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Diâm. (cm) " SortExpression="ANS_DMO_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbDMO_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_DMO_MED").ToString())?"":Convert.ToDouble(Eval("ANS_DMO_MED").ToString()).ToString("0.0") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Dens. (g/cm³)" SortExpression="ANS_DND_MED" 
+                    ControlStyle-Width="60px" >
+			<ItemTemplate>
+				<asp:Label ID="lbDND_MED" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_DND_MED").ToString())?"":Convert.ToDouble(Eval("ANS_DND_MED").ToString()).ToString("0.000") %>' />
+			</ItemTemplate>
+
+<ControlStyle Width="60px"></ControlStyle>
+
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			</Columns>
+			<AlternatingRowStyle CssClass="linha_impar" />
+			<RowStyle CssClass="linha_par" />
+			<SelectedRowStyle CssClass="selecionado" />
+			<HeaderStyle CssClass="cabecalho_tabela" />
+			<EmptyDataRowStyle CssClass="font_body" />
+			</asp:GridView>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+        <table width="100%">
+	    <tr>
+		    <td class="font_body">
+			    Métodos de Análise:<br/>
+                O.QCQ.004 - Título, Tenacidade e Alongamento,<br />
+                O.QCQ.005 - Verificação de Entrelaçamento e Retenção no FibreScan,<br/>
+                O.QCQ.007 - Torque,<br />
+                O.QCQ.008 - % Óleo RMN,<br />
+                O.QCQ.009 - Densidade de Bobinas,<br/>
+                O.QCQ.010 - Encolhimento,<br/>
+                O.QCQ.011 - Análise EKB ***,<br />
+                O.QCQ.012 - Porcentagem de Elastano  ***,<br />
+                <br />
+                *** Quando aplicável<br />
+		    </td>
+		    <td class="font_body">
+                UNIFI  do  Brasil  Ltda.<br/>
+                Av.  Alberto  Vieira  Romão,  1717<br/>
+                Distr.  Industrial  - Alfenas  -  MG<br/>
+                CEP:37130-000  fone:(035) 32995000<br/>	
+		    </td>
+	    </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+</div>
+</div>
+</form>
+</body>
+</html>

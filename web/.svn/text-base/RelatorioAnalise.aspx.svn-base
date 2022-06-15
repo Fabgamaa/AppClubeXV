@@ -1,0 +1,1486 @@
+﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="RelatorioAnalise.aspx.cs" Inherits="_Default"%>
+<%@ Register Src="inc/BarraIdentificacao.ascx" TagName="Barra" TagPrefix="ucBarra"%>
+
+<!--#include file="inc/FWMNUSUB.aspx"-->
+<!-- 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Empresa           : Fourway Informática
+Sistema           : FWUNF
+Arquivo           : RelatorioAnalise.aspx 
+Criado em         : 04/11/2010
+Última Alteração  : 
+Versão            : 1.00
+Descrição         : Módulo para Relatório de Análise
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head" runat="server">
+<link rel="stylesheet" type="text/css" href="css/FW.css"/>
+<style type="text/css">
+    .td_borda
+    {
+        BORDER-RIGHT: #003876 1px solid;
+        BORDER-TOP: #003876 1px solid;
+        BORDER-LEFT: #003876 1px solid;
+        BORDER-BOTTOM: #003876 1px solid;
+        font-size: 8pt;
+	    color: #191970;
+	    font-family: Verdana, Arial, 'MS Sans Serif';
+	    text-decoration: none;
+    }
+</style>
+	<title><% Response.Write(ConfigurationManager.AppSettings["Titulo"]); %></title>
+</head>
+<body class="bg" style="margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;width:780px">
+<form id="frmAnalise" runat="server">
+<asp:HiddenField ID="Origem" runat="server" />
+<asp:HiddenField ID="rowId" runat="server" />
+<script type="text/javascript" language="javascript" src="scr/FWGNR.js"></script>
+<script type="text/javascript" language="javascript" src="scr/FWMNU.js"></script>
+<ucBarra:Barra ID="ucBarra" runat="server"></ucBarra:Barra>
+<div style="left:5px">
+<div runat="server" id="dvFiltro" visible="true">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td colspan="2" class="font_titulo_grd" style="width:780px">
+			Pesquisar Relatório de Análise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Data Inicial</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:TextBox id="txt_dat_ini" runat="server" CssClass="text_box" maxlength="10" style="width:100px"></asp:TextBox> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Data Final</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:TextBox id="txt_dat_fim" runat="server" CssClass="text_box" maxlength="10" style="width:100px"></asp:TextBox> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Lote</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:TextBox id="txt_lot" runat="server" CssClass="text_box" maxlength="10" style="width:100px" OnTextChanged="txt_lot_OnTextChanged" AutoPostBack="true"></asp:TextBox>&nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Tipo de Análise</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:ListBox ID="cbo_ans_tip" runat="server" CssClass="combo_box" Height="100px" SelectionMode="Multiple">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:ListBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Título</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:DropDownList ID="cbo_tit_poy_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Apresentação</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:DropDownList ID="cbo_aps_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Máquina</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:DropDownList ID="cbo_maq_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Entrelaçamento</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:DropDownList ID="cbo_ert_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Virada</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:TextBox id="txt_vrd" runat="server" CssClass="text_box" maxlength="10" style="width:100px"></asp:TextBox> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Status</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_sts" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+				<asp:ListItem value="1" Text="ATIVO" Selected="True"></asp:ListItem>
+				<asp:ListItem value="0" Text="INATIVO"></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:Button ID="btProcurar"   runat="server" CssClass="botao" Text="Listar" OnClick="btProcurar_Click" />
+		</td>
+	</tr>
+</table>
+</div>
+<div runat="server" id="dvResultado" visible="false">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td class="font_titulo_grd">
+			Relatório de Análise
+		</td>
+	</tr>
+	<tr>
+		<td class="font_body" style="width:780px" align="right">
+			<asp:Label ID="lb_fil" runat="server" CssClass="font_body_maiusculo" />&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<asp:LinkButton ID="lkb_pdf" runat="server" OnClick="lkb_pdf_Click" Text="pdf" ToolTip="Exporta para PDF"></asp:LinkButton>
+			&nbsp;
+			<asp:LinkButton ID="lkb_xls" runat="server" OnClick="lkb_xls_Click" Text="xls" ToolTip="Exporta para XLS"></asp:LinkButton>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<asp:Label ID="lblSortLogin" runat="server" Visible="false" Text="ASC"></asp:Label>
+			<asp:GridView Width="760px" CausesValidation="false"   ID="gvAnalise" DataKeyNames="ANS_ID" 
+				runat="server" AutoGenerateColumns="false" AllowSorting="true" 
+				OnRowDataBound="gvAnalise_RowDataBound"  OnSorting="gvAnalise_Sorting"
+				OnRowCreated="gvAnalise_RowCreated"
+				EmptyDataText="Não foram encontrados registros de acordo com o filtro.">
+			<Columns>
+			<asp:TemplateField HeaderText=" Lote " SortExpression="ANS_LOT" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_LOT" runat="server" Text='<%# Eval("ANS_LOT") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Data " SortExpression="ANS_DAT" ControlStyle-Width="80px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_DAT" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_DAT").ToString())?"":Convert.ToDateTime(Eval("ANS_DAT").ToString()).ToString("dd/MM/yyyy") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Titulo " SortExpression="TIT_POY_DES" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTIT_POY_DES" runat="server" Text='<%# Eval("TIT_POY_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Apresentação " SortExpression="APS_DES" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbAPS_DES" runat="server" Text='<%# Eval("APS_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Tipo Máquina " SortExpression="MAQ_TIP_DES" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbMAQ_TIP_DES" runat="server" Text='<%# Eval("MAQ_TIP_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Máquina " SortExpression="MAQ_DES" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbMAQ_DES" runat="server" Text='<%# Eval("MAQ_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Tipo Ent. " SortExpression="ERT_DES" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbERT_DES" runat="server" Text='<%# Eval("ERT_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Virada " SortExpression="ANS_VRD" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_VRD" runat="server" Text='<%# Eval("ANS_VRD") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" TM " SortExpression="ANS_TIT_MED" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTIT_MED" runat="server" Text='<%# Eval("ANS_TIT_MED") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Óleo " SortExpression="ANS_OLE_MED" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbOLE_MED" runat="server" Text='<%# Eval("ANS_OLE_MED") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Status " SortExpression="ANS_STS" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_STS" runat="server" Text='<%# (Eval("ANS_STS").ToString() == "1")?"ATIVO":"INATIVO" %>'/>
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			</Columns>
+			<AlternatingRowStyle CssClass="linha_impar" />
+			<RowStyle CssClass="linha_par" />
+			<SelectedRowStyle CssClass="selecionado" />
+			<HeaderStyle CssClass="cabecalho_tabela" />
+			<EmptyDataRowStyle CssClass="font_body" />
+			</asp:GridView>
+		</td>
+	</tr>
+</table>
+</div>
+<div runat="server" id="dvRelatorio" visible="false">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td colspan="5" class="font_titulo_grd">
+			Relatório de Análise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5" class="font_body" align="right"><%= DateTime.Now.ToString() %></td>
+	</tr>
+	<tr>
+		<td colspan="5" class="font_body"><asp:Label runat="server" ID="lb_filtro"></asp:Label></td>
+	</tr>
+	<div runat="server" id="dv_rel" visible="false">
+	<tr>
+		<td colspan="5">
+		<table cellspacing="1px">
+		<tr>
+		    <td class="td_borda">Data</td>
+		    <td class="td_borda">Lote</td>
+		    <td class="td_borda">Título</td>
+		    <td class="td_borda">Apresentação</td>
+		    <td class="td_borda">Tipo Máquina</td>
+		    <td class="td_borda">Máquina</td>
+		    <td class="td_borda">Entrelaçamento</td>
+		    <td class="td_borda">Virada</td>
+	    </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dat_rel" runat="server">&nbsp;</asp:Label>
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_lot_rel" runat="server">&nbsp;</asp:Label>
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_poy_id_rel" runat="server">&nbsp;</asp:Label>		    
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aps_id_rel" runat="server">&nbsp;</asp:Label>		    
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_maq_tip_id_rel" runat="server">&nbsp;</asp:Label>
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_maq_id_rel" runat="server">&nbsp;</asp:Label>
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_id_rel" runat="server">&nbsp;</asp:Label>		    
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_vrd_rel" runat="server">&nbsp;</asp:Label>
+		    </td>
+		</tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5" class="font_body">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="5">
+		<table cellspacing="1px">
+		    <tr>
+	        <td class="td_borda">Posição</td>
+		    <td class="td_borda">
+    		    <asp:Label  ID="lb_pos_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label ID="lb_pos_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label ID="lb_pos_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label ID="lb_pos_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label ID="lb_pos_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label ID="lb_pos_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">Média</td>
+		    <td class="td_borda">Desvio</td>
+		    <td class="td_borda">Espec.</td>
+		    <td class="td_borda">Mínimo</td>
+		    <td class="td_borda">Máximo</td>
+        </tr>
+	    <tr>
+		    <td class="td_borda" rowspan="2">Titulo (Dtex)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tit_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tit_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tit_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tit_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tit_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Tenacidade (cN/tex)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_tnc_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tnc_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tnc_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_tnc_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_tnc_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Alongamento (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_aon_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_aon_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_aon_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_aon_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_aon_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Óleo (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ole_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ole_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ole_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ole_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ole_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Encolhimento (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_enm_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_enm_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_enm_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_enm_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_enm_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">E (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_eee_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_eee_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_eee_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_eee_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_eee_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">K (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_kkk_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_kkk_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_kkk_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_kkk_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_kkk_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">B (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_bbb_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_bbb_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_bbb_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_bbb_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_bbb_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">PUE (%)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pue_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pue_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pue_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pue_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pue_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Torque (T/m/s)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_trq_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_trq_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_trq_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_trq_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_trq_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Entrelaçamento (Nós/m)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_ert_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ert_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ert_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_ert_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_ert_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Retenção 1</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt3_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt3_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt3_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt3_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt3_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Retenção 2</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_rt5_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt5_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt5_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_rt5_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_rt5_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+        <tr>
+		    <td class="font_body">
+                <asp:Label id="lbl_rt3_rt5" runat="server"></asp:Label>
+            </td>
+        </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Peso (kg)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_med" runat="server">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_pes_dsv" runat="server">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pes_med_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pes_min_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_pes_max_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_med" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_pes_sts_dsv" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+	    </tr>
+
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Diâmetro (cm)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_med" runat="server">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dmo_dsv" runat="server">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dmo_med_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dmo_min_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dmo_max_esp" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_med" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dmo_sts_dsv" runat="server" ForeColor="Green">&nbsp</asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="td_borda" rowspan="2">Densidade (g/cm³)</td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_001" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_002" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_003" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_004" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_005" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_006" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_med" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:50px">
+    		    <asp:Label id="lb_dnd_dsv" runat="server">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dnd_med_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dnd_min_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" rowspan="2" style="width:50px">
+    		    <asp:Label id="lb_dnd_max_esp" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_001" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_002" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_003" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_004" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_005" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_006" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_med" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+		    <td class="td_borda">
+    		    <asp:Label id="lb_dnd_sts_dsv" runat="server" ForeColor="Green">&nbsp;</asp:Label> 
+		    </td>
+	    </tr>
+
+	    </table>
+	    </td>
+	</tr>
+    <tr>
+		<td>&nbsp;</td>
+    </tr>
+    <tr>
+		<td class="font_body">
+            Observação: <asp:Label id="lb_obs_rel" runat="server"></asp:Label>
+        </td>
+    </tr>
+    <tr>
+		<td>&nbsp;</td>
+    </tr>
+    </div>
+</table>
+</div>
+</div>
+</form>
+</body>
+</html>

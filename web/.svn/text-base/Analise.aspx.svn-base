@@ -1,0 +1,2012 @@
+﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="Analise.aspx.cs" Inherits="_Default"%>
+<%@ Register Src="inc/BarraIdentificacao.ascx" TagName="Barra" TagPrefix="ucBarra"%>
+
+<!--#include file="inc/FWMNUSUB.aspx"-->
+<!-- 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Empresa           : Fourway Informática
+Sistema           : FWUNF
+Arquivo           : Analise.aspx 
+Criado em         : 24/11/2010
+Última Alteração  : 
+Versão            : 1.00
+Descrição         : Módulo para Cadastro de Análise 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head" runat="server">
+<link rel="stylesheet" type="text/css" href="css/FW.css"/>
+	<title><% Response.Write(ConfigurationManager.AppSettings["Titulo"]); %></title>
+</head>
+<body class="bg" style="margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;width:780px">
+<form id="frmAnalise" runat="server" action="Analise.aspx">
+<asp:HiddenField ID="Origem" runat="server" />
+<asp:HiddenField ID="rowId" runat="server" />
+<script type="text/javascript" language="javascript" src="scr/FWGNR.js"></script>
+<script type="text/javascript" language="javascript" src="scr/FWMNU.js"></script>
+<ucBarra:Barra ID="ucBarra" runat="server"></ucBarra:Barra>
+<div style="left:5px">
+<div runat="server" id="dvFiltro" visible="true">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td colspan="2" class="font_titulo_grd" style="width:780px">
+			Pesquisar Analise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Data</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:TextBox id="txt_dat" runat="server" CssClass="text_box" maxlength="10" style="width:100px"></asp:TextBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Lote</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:TextBox id="txt_lot" runat="server" CssClass="text_box" maxlength="10" style="width:100px"></asp:TextBox>&nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Tipo de Análise</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:ListBox ID="cbo_ans_tip" runat="server" CssClass="combo_box" Height="100px" SelectionMode="Multiple">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:ListBox>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Título</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_tit_poy_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Apresentação</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_aps_id" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Máquina</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_maq_id" runat="server" CssClass="combo_box" OnSelectedIndexChanged="cbo_maq_id_SelectedIndexChanged">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">Status</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:DropDownList ID="cbo_sts" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+				<asp:ListItem value="1" Text="ATIVO" Selected="True"></asp:ListItem>
+				<asp:ListItem value="0" Text="INATIVO"></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<asp:Button ID="btProcurar"   runat="server" CssClass="botao" Text="Listar" OnClick="btProcurar_Click" /> &nbsp;&nbsp;
+			<asp:Button ID="btLimpar"     runat="server" CssClass="botao" Text="Limpar" OnClick="btLimpar_Click" /> &nbsp;&nbsp;
+			<asp:Button ID="btNovoFiltro" runat="server" CssClass="botao" Text="Novo"   Onclick="btNovoFiltro_Click" />
+		</td>
+	</tr>
+</table>
+</div>
+<div runat="server" id="dvResultado" visible="false">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0">
+	<tr>
+		<td class="font_titulo_grd" style="width:780px">
+			Pesquisar Análise
+		</td>
+	</tr>
+	<tr>
+		<td class="font_body" style="width:780px" align="right">
+			<asp:Label ID="lb_fil" runat="server" CssClass="font_body_maiusculo" />&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<asp:Button ID="btVoltarGrid"     runat="server" CssClass="botao" Text="Filtro" Onclick="btVoltar_Click" /> &nbsp;&nbsp;
+			<asp:Button ID="btNovoFiltroGrid" runat="server" CssClass="botao" Text="Novo"   Onclick="btNovoFiltro_Click" />
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<asp:LinkButton ID="lkb_pdf" runat="server" OnClick="lkb_pdf_Click" Text="pdf" ToolTip="Exporta para PDF"></asp:LinkButton>
+			&nbsp;
+			<asp:LinkButton ID="lkb_xls" runat="server" OnClick="lkb_xls_Click" Text="xls" ToolTip="Exporta para XLS"></asp:LinkButton>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<asp:Label ID="lblSortLogin" runat="server" Visible="false" Text="ASC"></asp:Label>
+			<asp:GridView Width="760px" CausesValidation="false"   ID="gvAnalise" DataKeyNames="ANS_ID" 
+				runat="server" AutoGenerateColumns="false" AllowSorting="true" 
+				OnRowDataBound="gvAnalise_RowDataBound"  OnSorting="gvAnalise_Sorting"
+				OnRowCreated="gvAnalise_RowCreated"
+				EmptyDataText="Não foram encontrados registros de acordo com o filtro.">
+			<Columns>
+			<asp:TemplateField HeaderText=" Data " SortExpression="ANS_DAT" ControlStyle-Width="80px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_DAT" runat="server" Text='<%# String.IsNullOrEmpty(Eval("ANS_DAT").ToString())?"":Convert.ToDateTime(Eval("ANS_DAT").ToString()).ToString("dd/MM/yyyy") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Lote " SortExpression="ANS_LOT" ControlStyle-Width="80px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_LOT" runat="server" Text='<%# Eval("ANS_LOT") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Titulo " SortExpression="TIT_POY_DES" ControlStyle-Width="200px" >
+			<ItemTemplate>
+				<asp:Label ID="lbTIT_POY_DES" runat="server" Text='<%# Eval("TIT_POY_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Máquina " SortExpression="MAQ_DES" ControlStyle-Width="200px" >
+			<ItemTemplate>
+				<asp:Label ID="lbMAQ_DES" runat="server" Text='<%# Eval("MAQ_DES") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Virada " SortExpression="ANS_VRD" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_VRD" runat="server" Text='<%# Eval("ANS_VRD") %>' />
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			<asp:TemplateField HeaderText=" Status " SortExpression="ANS_STS" ControlStyle-Width="40px" >
+			<ItemTemplate>
+				<asp:Label ID="lbANS_STS" runat="server" Text='<%# (Eval("ANS_STS").ToString() == "1")?"ATIVO":"INATIVO" %>'/>
+			</ItemTemplate>
+			<HeaderStyle ForeColor="White" />
+			</asp:TemplateField>
+			</Columns>
+			<AlternatingRowStyle CssClass="linha_impar" />
+			<RowStyle CssClass="linha_par" />
+			<SelectedRowStyle CssClass="selecionado" />
+			<HeaderStyle CssClass="cabecalho_tabela" />
+			<EmptyDataRowStyle CssClass="font_body" />
+			</asp:GridView>
+		</td>
+	</tr>
+</table>
+</div>
+<div ID="divCadastro" runat="server">
+<table style="width:780px" align="center" border="0" cellspacing="4" cellpadding="0" class="font_body">
+	<tr>
+		<td colspan="4" class="font_titulo_grd" style="width:780px">
+			<asp:Label runat="server" ID="lbAcao" CssClass="font_titulo_grd"></asp:Label>
+			Análise
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Data</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:TextBox id="txt_dat_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:100px"></asp:TextBox> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Lote</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body" align="left">
+			<asp:TextBox id="txt_lot_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:100px" OnTextChanged="txt_lot_inc_OnTextChanged" AutoPostBack="true"></asp:TextBox> * &nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Tipo de Análise</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="font_body">
+			<asp:DropDownList ID="cbo_ans_tip_inc" runat="server" CssClass="combo_box">
+				<asp:ListItem value="" Text=""></asp:ListItem>
+			</asp:DropDownList>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Título</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:DropDownList ID="cbo_tit_poy_id_inc" runat="server" CssClass="combo_box">
+			</asp:DropDownList> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Apresentação</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:DropDownList ID="cbo_aps_id_inc" runat="server" CssClass="combo_box" OnSelectedIndexChanged="cbo_aps_id_inc_OnSelectedIndexChanged" AutoPostBack="true">
+			</asp:DropDownList> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Máquina</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:DropDownList ID="cbo_maq_id_inc" runat="server" CssClass="combo_box" OnSelectedIndexChanged="cbo_maq_id_inc_SelectedIndexChanged">
+			</asp:DropDownList> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Entrelaçamento</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:DropDownList ID="cbo_ert_id_inc" runat="server" CssClass="combo_box">
+			</asp:DropDownList> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Virada</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:TextBox id="txt_vrd_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:100px"></asp:TextBox> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">&nbsp</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="destaque">Dados</td>
+	</tr>
+
+	<tr>
+		<td colspan="4">
+		<table border="0">
+		<tr>
+        	<td class="font_body">&nbsp;</td>
+        	<td class="font_body" style="width:50px" align="center">1</td>
+        	<td class="font_body" style="width:50px" align="center">2</td>
+        	<td class="font_body" style="width:50px" align="center">3</td>
+        	<td class="font_body" style="width:50px" align="center">4</td>
+        	<td class="font_body" style="width:50px" align="center">5</td>
+        	<td class="font_body" style="width:50px" align="center">6</td>
+		    <td class="font_body">&nbsp;</td>
+        	<td class="font_body" style="width:120px">Média</td>
+		    <td class="font_body" style="width:120px">Desvio</td>
+		    <td class="font_body" style="width:120px">Espec.</td>
+		    <td class="font_body" style="width:120px">Mínimo</td>
+		    <td class="font_body" style="width:120px">Máximo</td>
+        </tr>
+		<tr>
+	        <td class="font_body" style="width:180px" nowrap="nowrap">Posição</td>
+		    <td class="font_body">
+    		    <asp:TextBox  ID="txt_pos_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:TextBox ID="txt_pos_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:TextBox ID="txt_pos_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:TextBox ID="txt_pos_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:TextBox ID="txt_pos_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:TextBox ID="txt_pos_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">&nbsp;</td>
+        </tr>
+		<tr>
+        	<td class="font_body" colspan="13">&nbsp;</td>
+        </tr>
+	    <tr>
+		    <td class="font_body" rowspan="2">Titulo (Dtex)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tit_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:25px" nowrap="nowrap">
+    		    <asp:Label id="lb_tit_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:25px" nowrap="nowrap">
+    		    <asp:Label id="lb_tit_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:25px" nowrap="nowrap">
+    		    <asp:Label id="lb_tit_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:25px" nowrap="nowrap">
+    		    <asp:Label id="lb_tit_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:25px" nowrap="nowrap">
+    		    <asp:Label id="lb_tit_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tit_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Tenacidade (cN/tex)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_tnc_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_tnc_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_tnc_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_tnc_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_tnc_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_tnc_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_tnc_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Alongamento (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_aon_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_aon_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_aon_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_aon_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_aon_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_aon_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_aon_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Óleo (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ole_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_ole_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_ole_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ole_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ole_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ole_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ole_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body">Pré-medida 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Pré-medida 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Pré-medida 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pe3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Pós-medida 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Pos-medida 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Pos-medida 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_po3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" colspan="13">
+    			<asp:Button ID="btCalculaEncolhimento" runat="server" Text="Calcular Encolhimento" Width="140px" CssClass="botao" onclick="btCalculaEncolhimento_Click" />
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" rowspan="2">Encolhimento (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_enm_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_enm_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_enm_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_enm_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_enm_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_enm_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_enm_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">E (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_eee_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_eee_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_eee_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_eee_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_eee_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_eee_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_eee_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">K (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_kkk_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_kkk_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_kkk_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_kkk_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_kkk_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_kkk_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_kkk_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">B (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_bbb_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_bbb_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_bbb_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_bbb_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_bbb_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_bbb_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_bbb_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+        <tr>
+		    <td class="font_body">Poliester 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Elastano 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Poliester 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Elastano 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Poliester 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Elastano 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Poliester 4</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pl4_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Elastano 4</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_el4_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" colspan="13">
+    			<asp:Button ID="btCalculaPUE" runat="server" Text="Calcular PUE%" Width="140px" CssClass="botao" onclick="btCalculaPUE_Click" />
+		    </td>
+        </tr>
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">PUE (%)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pue_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_pue_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_pue_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pue_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pue_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pue_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_pue_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body">Torque 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Torque 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Torque 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_to3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Tempo 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te1_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Tempo 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te2_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Tempo 3</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_te3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" colspan="13">
+    			<asp:Button ID="btCalculaTorque" runat="server" Text="Calcular Torque" Width="140px" CssClass="botao" onclick="btCalculaTorque_Click" />
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" rowspan="2">Torque (T/m/s)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_trq_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_trq_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_trq_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_trq_med_esp_inc" runat="server" ForeColor="Green" Width="40px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_trq_min_esp_inc" runat="server" ForeColor="Green" Width="40px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_trq_max_esp_inc" runat="server" ForeColor="Green" Width="40px"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_trq_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Entrelaçamento (Nós/m)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_ert_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_ert_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_ert_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ert_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ert_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_ert_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_ert_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Retenção 1</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt3_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_rt3_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_rt3_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt3_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt3_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt3_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt3_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+
+	    <tr>
+		    <td class="font_body" rowspan="2">Retenção 2</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_rt5_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_rt5_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_rt5_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt5_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt5_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_rt5_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_rt5_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+	    <tr>
+		    <td class="font_body">
+                <asp:Label id="lbl_rt3_rt5" runat="server"></asp:Label>
+            </td>
+        </tr>
+
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body">Peso do Tubete</td>
+		    <td class="font_body" colspan="13">
+    		    <asp:TextBox id="txt_aps_pes_inc" runat="server" CssClass="text_box"  maxlength="5" style="width:50px"></asp:TextBox> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">Diâmetro do Tubete</td>
+		    <td class="font_body" colspan="13">
+    		    <asp:TextBox id="txt_aps_dmo_inc" runat="server" CssClass="text_box"  maxlength="5" style="width:50px"></asp:TextBox> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">C. Maior</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cma_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">C. Menor</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_cme_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" colspan="6">
+    		    &nbsp;
+		    </td>
+        </tr>
+		<tr>
+		    <td class="font_body">Peso (g)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_pes_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_pes_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_pes_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pes_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pes_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_pes_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+
+	    <tr>
+		    <td class="font_body">Diâmetro (cm)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dmo_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_dmo_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_dmo_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dmo_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dmo_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dmo_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" colspan="13">
+    			<asp:Button ID="btCalculaDensidade" runat="server" Text="Calcular Densidade" Width="140px" CssClass="botao" onclick="btCalculaDensidade_Click" />
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body" rowspan="2">Densidade (g/cm³)</td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_001_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_002_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_003_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_004_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_005_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:TextBox id="txt_dnd_006_inc" runat="server" CssClass="text_box"  maxlength="10" style="width:50px"></asp:TextBox> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_dnd_med_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:20px">
+    		    <asp:Label id="lb_dnd_dsv_inc" runat="server" Width="30px"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dnd_med_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dnd_min_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+		    <td class="font_body" rowspan="2" style="width:20px">
+    		    <asp:Label id="lb_dnd_max_esp_inc" runat="server" ForeColor="Green"></asp:Label> 
+		    </td>
+        </tr>
+	    <tr>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_001_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_002_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_003_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_004_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_005_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_006_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body" style="width:10px">
+    		    &nbsp;
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_med_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+		    <td class="font_body">
+    		    <asp:Label id="lb_dnd_sts_dsv_inc" runat="server" ForeColor="Red"></asp:Label> 
+		    </td>
+	    </tr>
+	    <tr>
+		    <td>&nbsp;</td>
+        </tr>
+	    </table>
+	    </td>
+	</tr>
+
+	<tr>
+		<td colspan="4" class="font_body">Observação</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+    		<asp:TextBox id="txt_obs_inc" runat="server" CssClass="text_box"  maxlength="800"  style="width:600px;" TextMode="MultiLine" Rows="5" ></asp:TextBox> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" class="font_body">Status</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:DropDownList ID="cbo_sts_inc" runat="server" CssClass="combo_box">
+				<asp:ListItem value="1" Text="ATIVO"></asp:ListItem>
+				<asp:ListItem value="0" Text="INATIVO" Selected="True"></asp:ListItem>
+			</asp:DropDownList> *
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<asp:Button ID="btSalvar" runat="server" Text="Salvar" CssClass="botao" onclick="btSalvar_Click" /> &nbsp;&nbsp;
+			<asp:Button ID="btSalvarImprimir" runat="server" Text="Salvar e Imprimir" CssClass="botao" onclick="btSalvarImprimir_Click" style="width:120px"/> &nbsp;&nbsp;
+			<asp:Button ID="btVoltar" runat="server" Text="Filtro" CssClass="botao" onclick="btVoltar_Click" /> &nbsp;&nbsp;
+			<asp:Button ID="btNovo"   runat="server" Text="Novo"   CssClass="botao" Onclick="btNovoFiltro_Click" />
+		</td>
+	</tr>
+</table>
+</div>
+</div>
+</form>
+</body>
+</html>
